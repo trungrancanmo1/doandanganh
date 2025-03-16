@@ -18,7 +18,10 @@ const HomePage = () => {
                 <span className="font-semibold text-lg">Trường đại học Bách Khoa - Đại học Quốc Gia TPHCM</span>
             </div>
             <div className="space-x-4">
-                <button style={{ border: "2px solid black", backgroundColor: "white", padding: "8px 16px", borderRadius: "5px" }}>
+                <button 
+                    onClick={() => navigate("/register")} 
+                    style={{ border: "2px solid black", backgroundColor: "white", padding: "8px 16px", borderRadius: "5px" }}
+                >
                     Đăng kí
                 </button>
                 <button 

@@ -11,7 +11,7 @@ const LoginPage = () => {
     <div className="flex h-screen justify-center items-center">
         {/* Phần trái - Form đăng nhập */}
         <div className="w-full max-w-md flex flex-col justify-center items-center px-8">
-            <img src={Logo} alt="Pet Care" className="w-24 mb-4" />
+            <img src={Logo} alt="SmartSprout" className="w-24 mb-4" />
             <h2 className="text-3xl font-bold text-green-500 font-dancing">SmartSprout</h2>
             <p className="text-gray-500 mb-6">Chào mừng bạn đến với SmartSprout</p>
 
@@ -35,7 +35,7 @@ const LoginPage = () => {
                 <input type="checkbox" id="remember" className="mr-1" />
                 <label htmlFor="remember">Lưu đăng nhập</label>
                 </div>
-                <button onClick={handleForgotPassword} className="text-blue-500 hover:underline">
+                <button onClick={handleForgotPassword} className="text-green-500 hover:underline">
                 Quên mật khẩu
                 </button>
             </div>
