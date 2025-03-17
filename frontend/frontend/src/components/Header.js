@@ -1,9 +1,10 @@
-// src/components/Header.js
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; 
 import Logo from "../assets/LogoWebsite.png";
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate(); 
 
     return (
         <div className="h-[100px] bg-gray-100">
@@ -28,8 +29,18 @@ const Header = () => {
                     {isOpen && (
                         <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg">
                             <ul className="py-2">
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Cài đặt tài khoản</li>
-                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Đăng xuất</li>
+                                <li 
+                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                    onClick={() => navigate("/account-settings")} // Điều hướng đến trang cài đặt tài khoản
+                                >
+                                    Cài đặt tài khoản
+                                </li>
+                                <li 
+                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                    onClick={() => navigate("/")} 
+                                >
+                                    Đăng xuất
+                                </li>
                             </ul>
                         </div>
                     )}
