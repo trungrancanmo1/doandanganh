@@ -7,6 +7,7 @@ import OverviewPage from "./pages/OverviewPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import AccountSettings from "./pages/AccountSettings";
 import DiseaseStatus from "./pages/DiseaseStatus";
+import DashboardLightPage from "./pages/DashboardLightInfo";
 //import PrivateRoute from "./PrivateRoute";
 
 function App() {
@@ -16,10 +17,11 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/overview" element={<OverviewPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/account-settings" element={<AccountSettings />} />
-        <Route path="/disease-status" element={<DiseaseStatus />} />
+        <Route path="/dashboard/disease-status" element={<DiseaseStatus />} />
+        <Route path="/dashboard/overview" element={<OverviewPage />} />
+        <Route path="/dashboard/lightinfo" element={<DashboardLightPage />} />
       </Routes>
     </Router>
   );
