@@ -2,8 +2,15 @@ import React from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Sidebar from "../components/Sidebar";
-import DashboardCharts from "../components/DashboardCharts";
+import ChartComponent from "../components/ChartComponent";
 
+const lightData = [
+  { time: "00:00", value: 1000 },
+  { time: "06:00", value: 20000 },
+  { time: "12:00", value: 60000 },
+  { time: "18:00", value: 15000 },
+  { time: "23:59", value: 1000 },
+];
 
 const DashboardLightPage = () => {
   return (
@@ -38,7 +45,7 @@ const DashboardLightPage = () => {
                     <div className="w-[18%]">
                       <p>Từ</p>
                     </div>
-                    <div className="flex-grow mx-1 bg-gray-300">
+                    <div className="flex-grow mx-1 bg-gray-300 rounded-sm">
                       <p className="text-center">70000 lux</p>
                     </div>
                     <div className="w-[26%]"></div>
@@ -47,7 +54,7 @@ const DashboardLightPage = () => {
                     <div className="w-[18%]">
                       <p>Đến</p>
                     </div>
-                    <div className="flex-grow mx-1 bg-gray-300">
+                    <div className="flex-grow mx-1 bg-gray-300 rounded-sm">
                       <p className="text-center">80000 lux</p>
                     </div>
                     <div className="w-[26%] flex justify-end">
@@ -66,26 +73,36 @@ const DashboardLightPage = () => {
 
           {/* Hình ảnh cây */}
           <h2 className="text-xl font-bold mt-6">Chế độ điều chỉnh</h2>
-          <div className="grid grid-cols-2 gap-x-2 w-[50%]">
-            <div className="p-4 bg-white shadow rounded-lg flex items-center">
-              <span className="text-2xl mr-2">☀️</span>
-              <div>
-                <p className="text-gray-700">Ánh sáng</p>
-                <p className="font-bold">60000 lux</p>
-              </div>
+          <div className="grid grid-cols-2 gap-x-2 w-[50%] font-bold">
+            <div className="p-4 py-6 bg-white shadow rounded-lg flex items-center">
+              <input type="radio" name="light-mode" className="mr-2"></input>
+              <p>Thủ công</p>
             </div>
-            <div className="p-4 bg-white shadow rounded-lg flex items-center">
-              <span className="text-2xl mr-2">☀️</span>
-              <div>
-                <p className="text-gray-700">Ánh sáng</p>
-                <p className="font-bold">60000 lux</p>
-              </div>
+            <div className="p-4 py-6 bg-white shadow rounded-lg flex items-center">
+              <input type="radio" name="light-mode" className="mr-2"></input>
+              <p>Tự động</p>
             </div>
           </div>
 
           {/* Thống kê biểu đồ */}
-          <h2 className="text-xl font-bold mt-6">Thống kê trong 24 giờ qua</h2>
-          <DashboardCharts />
+          <h2 className="text-xl font-bold mt-6">Điều chỉnh đèn</h2>
+          <div className="w-[20%] bg-white shadow rounded-lg flex items-center p-4 py-6">
+            <label class="inline-flex items-center cursor-pointer">
+              <input type="checkbox" value="" class="sr-only peer"></input>
+              <div class="relative w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-gray-800 rounded-full peer  peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all  peer-checked:bg-green-500 dark:peer-checked:bg-green-500"></div>
+              <span class="ms-3 text-sm font-bold">Bật</span>
+            </label>
+          </div>
+
+          {/* Biểu đồ ánh sáng */}
+          <h2 className="text-xl font-bold mt-6 mb-2">Lịch sử độ sáng</h2>
+          <div className="w-[60%]">
+            <ChartComponent
+              title=""
+              data={lightData}
+              color="#fdd835"
+            />
+          </div>
         </div>
       </div>
       {/* Footer */}
