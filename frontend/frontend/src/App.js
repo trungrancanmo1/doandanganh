@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import OverviewPage from "./pages/OverviewPage";
+import DashboardLightPage from "./pages/DashboardLightInfo";
 //import PrivateRoute from "./PrivateRoute";
 
 function App() {
@@ -13,7 +14,8 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/overview" element={<OverviewPage />} />
+        <Route path="/dashboard/overview" element={<OverviewPage />} />
+        <Route path="/dashboard/lightinfo" element={<DashboardLightPage />} />
       </Routes>
     </Router>
   );
