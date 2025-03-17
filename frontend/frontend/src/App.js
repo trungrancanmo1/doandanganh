@@ -4,7 +4,9 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import OverviewPage from "./pages/OverviewPage";
-import DashboardLightPage from "./pages/DashboardLightInfo";
+import DashboardLightPage from "./pages/dashboard/LightInfo";
+import DashboardTempPage from "./pages/dashboard/TempInfo";
+import DashboardHumidityPage from "./pages/dashboard/HumidityInfo";
 //import PrivateRoute from "./PrivateRoute";
 
 function App() {
@@ -15,7 +17,9 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/overview" element={<OverviewPage />} />
-        <Route path="/dashboard/lightinfo" element={<DashboardLightPage />} />
+        <Route path="/dashboard/light" element={<DashboardLightPage />} />
+        <Route path="/dashboard/temperature" element={<DashboardTempPage />} />
+        <Route path="/dashboard/humidity" element={<DashboardHumidityPage />} />
       </Routes>
     </Router>
   );

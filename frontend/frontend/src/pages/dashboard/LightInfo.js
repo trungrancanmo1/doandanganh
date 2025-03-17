@@ -1,8 +1,8 @@
 import React from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import Sidebar from "../components/Sidebar";
-import ChartComponent from "../components/ChartComponent";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import Sidebar from "../../components/Sidebar";
+import ChartComponent from "../../components/ChartComponent";
 
 const lightData = [
   { time: "00:00", value: 1000 },
