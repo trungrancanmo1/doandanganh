@@ -11,16 +11,24 @@ const Sidebar = () => {
           Tổng quan thông số
         </li>
         <li className="py-3 pl-4 hover:bg-green-600 cursor-pointer rounded-lg">
-          Ánh sáng
+          <a className="block" href="/dashboard/light">
+            Ánh sáng
+          </a>
         </li>
         <li className="py-3 pl-4 hover:bg-green-600 cursor-pointer rounded-lg">
-          Nhiệt độ
+          <a className="block" href="/dashboard/temperature">
+            Nhiệt độ
+          </a>
         </li>
         <li className="py-3 pl-4 hover:bg-green-600 cursor-pointer rounded-lg">
-          Độ ẩm
+          <a className="block" href="/dashboard/humidity">
+            Độ ẩm
+          </a>
         </li>
         <li className="py-3 pl-4 hover:bg-green-600 cursor-pointer rounded-lg">
-          Tình trạng sâu bệnh
+          <a className="block" href="/dashboard/disease-status">
+            Tình trạng sâu bệnh
+          </a>
         </li>
       </ul>
     </div>

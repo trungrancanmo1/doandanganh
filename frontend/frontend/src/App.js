@@ -21,11 +21,12 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/account-settings" element={<AccountSettings />} />
-        <Route path="/dashboard/disease-status" element={<DiseaseStatus />} />
-        <Route path="/overview" element={<OverviewPage />} />
+        <Route path="/dashboard" element={<OverviewPage />} />
+        <Route path="/dashboard/overview" element={<OverviewPage />} />
         <Route path="/dashboard/light" element={<DashboardLightPage />} />
         <Route path="/dashboard/temperature" element={<DashboardTempPage />} />
         <Route path="/dashboard/humidity" element={<DashboardHumidityPage />} />
+        <Route path="/dashboard/disease-status" element={<DiseaseStatus />} />
       </Routes>
     </Router>
   );
