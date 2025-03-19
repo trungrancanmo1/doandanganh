@@ -9,6 +9,7 @@ import os
 from .handlers import FEEDS
 from .handlers import FEED_HANDLERS
 from dotenv import load_dotenv
+from .logger import logger
 load_dotenv(dotenv_path='./.env')
 
 
@@ -16,7 +17,7 @@ def connected(client : MQTTClient):
     # subcribe for these feeds
     for feed_id in FEEDS.values():
         client.subscribe(feed_id=feed_id)
-        print(f"Subscribed to {feed_id}")
+        logger.info(f'Subscribe to {feed_id}')
 
 
 def message(client, feed_id, new_value):

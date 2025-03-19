@@ -3,6 +3,7 @@
     - define the handler when
     receiving message from MQTT broker
 '''
+from .logger import logger
 # features : feed_id
 FEEDS = {
     "temperature":  "smart-farm.temperature",
@@ -12,17 +13,15 @@ FEEDS = {
 
 
 def handle_temperature(data):
-    print('Handle temperature')
-    # import time
-    # time.sleep(15)
+    logger.info('Handle temperature data')
 
 
 def handle_humidity(data):
-    print('Handle humidity')
+    logger.info('Handle humidity data')
 
 
 def handle_light(data):
-    print('Handle light')
+    logger.info('Handle light data')
 
 
 # feed_id : handlers
