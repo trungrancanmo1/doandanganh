@@ -1,5 +1,5 @@
 ## Set up and usage
-1. **Set up the environment variable**
+1. **Set up the environment variable or use .env file**
 ```bash
     pip install adafruit-io
     export IO_KEY=<Your io.adafruit.com key>

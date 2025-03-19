@@ -3,6 +3,8 @@ import os
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+from dotenv import load_dotenv
+load_dotenv(dotenv_path='./.env')
 
 
 options = {
@@ -16,7 +18,7 @@ options = {
 
 
 def connect_realtime():
-    credential = credentials.Certificate(Path(os.getenv("CREDENTIALS_LOCATION", "VARIABLE NOT SET")))
+    credential = credentials.Certificate(Path(os.getenv("CREDENTIALS_LOCATION", "DEFAULT")))
     firebase_admin.initialize_app(credential, options)
     return db.reference(path='/', app=firebase_admin.initialize_app(credential, options, name='realtime'))
 

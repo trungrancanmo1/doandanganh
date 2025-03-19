@@ -13,6 +13,8 @@ FEEDS = {
 
 def handle_temperature(data):
     print('Handle temperature')
+    # import time
+    # time.sleep(15)
 
 
 def handle_humidity(data):

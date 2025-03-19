@@ -1,8 +1,9 @@
 '''
-    - 
+    - Rest API expose
 '''
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from firebase import firestore_db
 
 
 class OverviewView(APIView):
