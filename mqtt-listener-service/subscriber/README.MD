@@ -6,8 +6,12 @@
     export IO_USERNAME=<Your io.adafruit.com username>
 ```
 
-2. **Import and use the package's util as mqtt_subscriber_start**
-```python
-    from afsubscriber import mqtt_subscriber_start
-    mqtt_subscriber_start()
+2. **Import and use the package's util as subscriber**
+
+
+3. **Run the service**
+# This would allow user to add the new sensor to the database and also
+# allow record of data to be persisted in the database
+```sh
+    python app.py
 ```

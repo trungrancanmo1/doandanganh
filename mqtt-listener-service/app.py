@@ -5,9 +5,12 @@ from routes import sensor_bp
 
 
 app = Flask(__name__)
+app.logger.setLevel(level='DEBUG')
+
 
 # register blueprints
 app.register_blueprint(sensor_bp, url_prefix="/api/v1/sensors")
+
 
 # run the mtqq listener service
 mttq_listener_service = threading.Thread(target=mqtt_listener, daemon=True)

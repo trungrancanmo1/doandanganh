@@ -6,12 +6,11 @@
 '''
 from Adafruit_IO import MQTTClient
 import os
-from .handlers import FEEDS
-from .handlers import FEED_HANDLERS
 from dotenv import load_dotenv
 from .logger import logger
 from firebase import firestore_db
 from google.cloud.firestore_v1 import FieldFilter
+from datetime import datetime
 
 
 load_dotenv(dotenv_path='./.env')
@@ -31,7 +30,11 @@ def connected(client : MQTTClient):
     # for feed_id in FEEDS.values():
     #     client.subscribe(feed_id=feed_id)
     #     logger.info(f'Subscribe to {feed_id}')
-    topics = firestore_db.collection('sensors').where(filter=FieldFilter('status', '==', True)).select(['topic']).get()
+    topics = firestore_db\
+    .collection('sensors')\
+    .where(filter=FieldFilter('status', '==', True))\
+    .select(['topic'])\
+    .get()
 
     for topic in topics:
         topic = topic.to_dict().get('topic')
@@ -39,21 +42,37 @@ def connected(client : MQTTClient):
         logger.info(f'Subscribe to { topic }')
 
 
-def message(client : MQTTClient, feed_id, new_value):
-    # call the appropriate handler
-    # if data is generated continously
-    # it is native blocking
-    if feed_id in FEEDS.values():
-        FEED_HANDLERS[feed_id](new_value)
+# this call-back function is a bottle-neck
+def message(client : MQTTClient, feed_id : str, new_value):
+    logger.warning('This function can be a bottle-neck')
+    # persist the data into the database
+    # feed_id is now the sensors document id
+    '''
+    - Add a record in the sensor document
+    '''
+    if 'temperature' in feed_id:
+        unit = 'C'
+    elif 'humidity' in feed_id:
+        unit = '%'
+    elif 'light' in feed_id:
+        unit = 'lx'
 
+    record = {
+        'data' : new_value,
+        'timestamp' : datetime.now(),
+        'unit' : unit
+    }
 
-def add_new_sensor_api_creating_new_topic_in_ada_fruit_subscribe_collecting_data():
-    pass
+    firestore_db\
+    .collection('sensors', feed_id, 'records')\
+    .add(record, str(record['timestamp']))
+    logger.info(f'Persist data from {feed_id}')
 
 
 def mqtt_listener():
     '''
-        start the mqtt service
+        - Start the mqtt service in one dedicated thread
+        - That thread is blocking-behiviour in nature because of loop_blocking() of callbacks
     '''
     # set up MQTT client
     client.on_connect = connected

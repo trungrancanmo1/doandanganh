@@ -2,7 +2,7 @@ import logging
 
 
 # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-logger = logging.getLogger('ADAFRUIT IO LISTENER')
+logger = logging.getLogger('MQTT Broker Listener')
 logger.setLevel(logging.DEBUG)
 
 console_handler = logging.StreamHandler()

@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from firebase import firestore_db
 from subscriber import client
+from flask import current_app
 
 
 sensor_bp = Blueprint("sensors", __name__)
@@ -21,7 +22,10 @@ def add_sensor(sensor_id):
         firestore_db.collection('sensors').add(document_data=data, document_id=sensor_id)
 
         # Tell the MQTT listener service to subscribe the topic of the newly added sensors
-        client.subscribe(feed_id=data['topic'])
+        topic = data['topic']
+        client.subscribe(feed_id=topic)
+        current_app.logger.info(f'Subscribe to {topic}')
+        
         return jsonify({}), 200
         
     except Exception:
