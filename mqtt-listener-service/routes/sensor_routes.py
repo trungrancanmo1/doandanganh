@@ -1,13 +1,13 @@
 from flask import Blueprint, jsonify, request
 from firebase import firestore_db
-from subscriber import client
+from adafruitclient import mqtt_client
 from flask import current_app
 
 
 sensor_bp = Blueprint("sensors", __name__)
 
 
-@sensor_bp.route('<sensor_id>', methods=['POST'])
+@sensor_bp.route('/<sensor_id>', methods=['POST'])
 def add_sensor(sensor_id):
     try:
         # Get JSON data from request
@@ -23,7 +23,7 @@ def add_sensor(sensor_id):
 
         # Tell the MQTT listener service to subscribe the topic of the newly added sensors
         topic = data['topic']
-        client.subscribe(feed_id=topic)
+        mqtt_client.subscribe(feed_id=topic)
         current_app.logger.info(f'Subscribe to {topic}')
         
         return jsonify({}), 200

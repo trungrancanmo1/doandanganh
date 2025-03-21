@@ -23,7 +23,7 @@ load_dotenv(dotenv_path='./.env')
 # getting API key from environment variable
 IO_USERNAME = os.getenv('IO_USERNAME', 'DEFAULT')
 IO_KEY = os.getenv('IO_KEY', 'DEFAULT')
-client = MQTTClient(IO_USERNAME, IO_KEY)
+mqtt_client = MQTTClient(IO_USERNAME, IO_KEY)
 
 
 def connected(client : MQTTClient):
@@ -114,14 +114,14 @@ def mqtt_listener():
         - That thread is blocking-behiviour in nature because of loop_blocking() of callbacks
     '''
     # set up MQTT client
-    client.on_connect = connected
-    client.on_message = message_v2
+    mqtt_client.on_connect = connected
+    mqtt_client.on_message = message_v2
 
     # connect to MQTT broker
-    client.connect()
+    mqtt_client.connect()
 
     logger.info('Workers manager started, workers ready to work!')
     threading.Thread(target=mqtt_listener_workers_manager, name='workers_manager', args=(5, ), daemon=True).start()
 
     # for testings
-    client.loop_blocking()
+    mqtt_client.loop_blocking()
