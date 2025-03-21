@@ -16,9 +16,9 @@ db.sqlite3
 media/
 staticfiles/
 
-# Django migrations
-**/migrations/*.py
-!**/migrations/__init__.py
+# # Django migrations
+# **/migrations/*.py
+# !**/migrations/__init__.py
 
 # IDE / Editor files
 .vscode/
