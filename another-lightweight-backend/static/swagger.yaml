@@ -1,0 +1,12 @@
+swagger: "2.0"
+info:
+  title: "Smart Farm API"
+  description: "A simple Flask-RESTful API with Swagger UI"
+  version: "1.0.0"
+paths:
+  /api/v1/tests:
+    get:
+      summary: "Get a test API"
+      responses:
+        200:
+          description: "A 'Hello World!' string"
