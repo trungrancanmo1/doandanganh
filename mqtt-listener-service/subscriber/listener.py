@@ -11,6 +11,10 @@ from .logger import logger
 from firebase import firestore_db
 from google.cloud.firestore_v1 import FieldFilter
 from datetime import datetime
+import threading
+from concurrent.futures import ThreadPoolExecutor
+from .workers import worker
+from .workers import data_queue
 
 
 load_dotenv(dotenv_path='./.env')
@@ -42,9 +46,8 @@ def connected(client : MQTTClient):
         logger.info(f'Subscribe to { topic }')
 
 
-# this call-back function is a bottle-neck
-def message(client : MQTTClient, feed_id : str, new_value):
-    logger.warning('This function can be a bottle-neck')
+def message_v1(client : MQTTClient, feed_id : str, new_value):
+    logger.warning('This function can be a bottle-neck and deprecated')
     # persist the data into the database
     # feed_id is now the sensors document id
     '''
@@ -69,6 +72,42 @@ def message(client : MQTTClient, feed_id : str, new_value):
     logger.info(f'Persist data from {feed_id}')
 
 
+def message_v2(client : MQTTClient, feed_id : str, new_value):
+    '''
+    - callback function when new data is collected
+    - simply add records to the queue and let workers handle the record
+    '''
+    if 'temperature' in feed_id:
+        unit = 'C'
+    elif 'humidity' in feed_id:
+        unit = '%'
+    elif 'light' in feed_id:
+        unit = 'lx'
+    else:
+        unit = 'unknown'
+
+    # create a record
+    record = {
+        'feed_id': feed_id,
+        'data': new_value,
+        'timestamp': datetime.now(),
+        'unit': unit
+    }
+
+    # store it to the queue
+    data_queue.put(record)
+    logger.info(f'Queued data from {feed_id}')
+
+
+def mqtt_listener_workers_manager(num = 5):
+    '''
+    - A parent threads that create a pool of thread workers
+    '''
+    with ThreadPoolExecutor(max_workers=num) as executor:
+        for _ in range(num):
+            executor.submit(worker)
+
+
 def mqtt_listener():
     '''
         - Start the mqtt service in one dedicated thread
@@ -76,10 +115,13 @@ def mqtt_listener():
     '''
     # set up MQTT client
     client.on_connect = connected
-    client.on_message = message
+    client.on_message = message_v2
 
     # connect to MQTT broker
     client.connect()
+
+    logger.info('Workers manager started, workers ready to work!')
+    threading.Thread(target=mqtt_listener_workers_manager, name='workers_manager', args=(5, ), daemon=True).start()
 
     # for testings
     client.loop_blocking()
