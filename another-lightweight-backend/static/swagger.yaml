@@ -3,42 +3,140 @@ info:
   title: "Smart Farm API"
   description: "A simple Flask-RESTful API with Swagger UI"
   version: "1.0.0"
-
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 paths:
   /api/v1/tests:
     get:
       summary: "Get a test API"
       description: "An initial test API"
       tags:
-        - Test
+        - "Test"
       responses:
-        200:
+        "200":
           description: "A 'Hello World!' string"
-
   /api/v1/auth/github:
     post:
       summary: "GitHub Login"
       description: "Login endpoint that validates user credentials and returns an access token."
       tags:
-        - Authentication
+        - "Authentication"
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
+              type: "object"
               properties:
                 firebase_jwt:
-                  type: string
+                  type: "string"
                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
       responses:
-        200:
+        "200":
           description: "Successful login, returns JWT token"
           content:
             application/json:
               schema:
-                type: object
+                type: "object"
                 properties:
                   access_token:
-                    type: string
+                    type: "string"
                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  user_id:
+                    type: "string"
+                    example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+                  email:
+                    type: "string"
+                    example: "user@example.com"
+                  role:
+                    type: "string"
+                    example: "admin"
+  /api/v1/inferences:
+    get:
+      summary: "Getting the inference for overview page"
+      description: "Endpoint to getting inference based on user_id and sensor_group"
+      tags:
+        - "Inference"
+      parameters:
+        - name: "user_id"
+          in: "query"
+          description: "User ID for inference"
+          required: true
+          schema:
+            type: "string"
+            example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+        - name: "sensor_group"
+          in: "query"
+          description: "Sensor group for inference"
+          required: true
+          schema:
+            type: "string"
+            example: "group1"
+      responses:
+        "200":
+          description: "Successful inference result"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  sensor_group:
+                    type: "string"
+                    example: "group1"
+                  time_stamp:
+                    type: "string"
+                    format: "date-time"
+                    example: "2023-03-15T12:34:56Z"
+                  inferences:
+                    type: "object"
+                    properties:
+                      temperature:
+                        type: "object"
+                        properties:
+                          value:
+                            type: "number"
+                            example: 25.5
+                          status:
+                            type: "string"
+                            example: "normal"
+                      light:
+                        type: "object"
+                        properties:
+                          value:
+                            type: "number"
+                            example: 300
+                          status:
+                            type: "string"
+                            example: "normal"
+                      humidity:
+                        type: "object"
+                        properties:
+                          value:
+                            type: "number"
+                            example: 60
+                          status:
+                            type: "string"
+                            example: "normal"
+                      camera:
+                        type: "object"
+                        properties:
+                          value:
+                            type: "string"
+                            example: "image_data_base64"
+                          status:
+                            type: "string"
+                            example: "normal"
+                          image_processed:
+                            type: "boolean"
+                            example: true
+                          insect_attack_detected:
+                            type: "boolean"
+                            example: false
+        "400":
+          description: "Invalid input data"
+      security:
+        - bearerAuth: []

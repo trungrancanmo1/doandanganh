@@ -1,9 +1,8 @@
 from flask_restful import Resource
 from flask import request
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask import current_app
-from flask import jsonify
 from http import HTTPStatus
 
 from schema import GithubLoginSchema
@@ -14,11 +13,6 @@ from models.User import User
 
 class GithubLogin(Resource):
     def post(self):
-        # must have the JWT generated from firebase' Auth2
-        # this endpoint will extract that JWT
-        # and then verify that JWT with firebase again
-        # and then generate a new JWT that include the role of the user
-        # this JWT is used with this back-end application later on
         schema = GithubLoginSchema()
         data = schema.load(request.get_json())
         decoded_token = auth.verify_id_token(id_token=data['firebase_jwt'])
@@ -40,7 +34,7 @@ class GithubLogin(Resource):
         
         # create new jwt
         decoded_token['role'] = user_role
-        decoded_token['exp'] = (datetime.utcnow() + timedelta(hours=1)).isoformat()
+        decoded_token['exp'] = int((datetime.fromtimestamp(decoded_token['iat'], tz=timezone.utc) + timedelta(days=3)).timestamp())
         token = jwt.encode(
             payload=decoded_token,
             key=current_app.config['JWT_SECRET_KEY'],
@@ -48,5 +42,8 @@ class GithubLogin(Resource):
         )
 
         return {
-            'access_token' : token
+            'access_token' : token,
+            'user_id' : user_id,
+            'email' : email,
+            'role' : user_role
         }, HTTPStatus.OK

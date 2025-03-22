@@ -2,9 +2,11 @@ from flask import Flask
 from flask_restful import Api
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask_cors import CORS
+from logging import DEBUG
 
 from resources.test import Test
 from resources.github_auth import GithubLogin
+from resources.inference import Inference
 from exceptions import register_error_handlers
 from config.config import SERVICE_ACCOUNT_KEY
 from config.config import JWT_SECRET_KEY
@@ -22,8 +24,9 @@ api = Api(app)
 
 
 # resources
-api.add_resource(GithubLogin, '/api/v1/auth/github')
 api.add_resource(Test, '/api/v1/tests')
+api.add_resource(GithubLogin, '/api/v1/auth/github')
+api.add_resource(Inference, '/api/v1/inferences')
 
 # exceptions handler registration
 register_error_handlers(app)
