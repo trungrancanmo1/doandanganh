@@ -16,6 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from .views import UpdateTemperatureBoundView, RetrieveTemperatureBoundView
 
 urlpatterns = [
+    path('bound/update/', UpdateTemperatureBoundView.as_view(), name='temperature_bound_update'),
+    path('bound/retrieve/', RetrieveTemperatureBoundView.as_view(), name='temperature_bound_retrieve'),
 ]
