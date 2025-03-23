@@ -98,3 +98,29 @@ class RetrieveMostRecentHumidityRecord(views.APIView):
             records = records[:n]
         serializer = HumidityRecordSerializer(records, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class DeleteOldestHumidityRecord(views.APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def delete(self, request):
+        n = request.query_params.get('n', None)
+        if n is not None:
+            try:
+                n = int(n)
+            except ValueError:
+                raise exceptions.ValidationError('n must be an integer')
+            if n <= 0:
+                raise exceptions.ValidationError('n must be positive')
+        records = HumidityRecord.objects.filter(user=request.user).order_by('timestamp')
+        if n is not None:
+            records = records[:n]
+        count = records.count()
+        
+        for record in records:
+            record.delete()
+        
+        return Response(
+            {'message': f"Deleted {count} oldest records"},
+            status=status.HTTP_200_OK,
+        )
