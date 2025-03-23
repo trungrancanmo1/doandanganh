@@ -11,6 +11,12 @@ from resources.github_auth import GithubLogin
 from resources.inference import Inference
 from resources.statistics import Statistics
 from resources.history import History
+from resources.environment import EnvironmentResource
+from resources.environment import EnvironmentListResource
+from resources.sensor import SensorResource
+from resources.sensor import SensorListResource
+from resources.actuator import ActuatorResource
+from resources.actuator import ActuatorListResource
 
 
 # init rest_api flask application
@@ -30,6 +36,13 @@ api.add_resource(GithubLogin, '/api/v1/auth/github')
 api.add_resource(Inference, '/api/v1/inferences')
 api.add_resource(Statistics, '/api/v1/statistics')
 api.add_resource(History, '/api/v1/histories')
+
+api.add_resource(EnvironmentListResource, '/api/v1/users/<string:user_id>/environments/')
+api.add_resource(EnvironmentResource, '/api/v1/users/<string:user_id>/environments/<string:env_id>/')
+api.add_resource(SensorListResource, '/api/v1/users/<string:user_id>/environments/<string:env_id>/sensors/')
+api.add_resource(SensorResource, '/api/v1/users/<string:user_id>/environments/<string:env_id>/sensors/<string:sensor_id>/')
+api.add_resource(ActuatorListResource, '/api/v1/users/<string:user_id>/environments/<string:env_id>/actuators/')
+api.add_resource(ActuatorResource, '/api/v1/users/<string:user_id>/environments/<string:env_id>/actuators/<string:actuator_id>/')
 
 # exceptions handler registration
 register_error_handlers(app)
