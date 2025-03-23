@@ -16,7 +16,7 @@ const DashboardOverview = () => {
         {" "}
         {/* Thêm flex-grow để chiếm toàn bộ không gian */}
         {/* Sidebar */}
-        <Sidebar />
+        <Sidebar activeItem="overview" />
         {/* Nội dung dashboard */}
         <div className="flex-1 p-6">
           <h2 className="text-xl font-bold mb-4">

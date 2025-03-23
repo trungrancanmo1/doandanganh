@@ -1,35 +1,32 @@
 import React from "react";
 
-const Sidebar = () => {
+const Sidebar = ({ activeItem }) => {
+  const items = [
+    { label: "Thông báo chung", path: "/dashboard/notifications", key: "notifications" },
+    { label: "Tổng quan thông số", path: "/dashboard/overview", key: "overview" },
+    { label: "Ánh sáng", path: "/dashboard/light", key: "light" },
+    { label: "Nhiệt độ", path: "/dashboard/temperature", key: "temperature" },
+    { label: "Độ ẩm", path: "/dashboard/humidity", key: "humidity" },
+    { label: "Tình trạng sâu bệnh", path: "/dashboard/disease-status", key: "disease-status" },
+  ];
+
   return (
     <div className="w-1/6 bg-[#598868] text-white p-2">
       <ul className="w-full">
-        <li className="py-3 pl-4 hover:bg-green-600 cursor-pointer rounded-lg">
-          Thông báo chung
-        </li>
-        <li className="py-3 pl-4 bg-gray-300 text-black rounded-lg">
-          Tổng quan thông số
-        </li>
-        <li className="py-3 pl-4 hover:bg-green-600 cursor-pointer rounded-lg">
-          <a className="block" href="/dashboard/light">
-            Ánh sáng
-          </a>
-        </li>
-        <li className="py-3 pl-4 hover:bg-green-600 cursor-pointer rounded-lg">
-          <a className="block" href="/dashboard/temperature">
-            Nhiệt độ
-          </a>
-        </li>
-        <li className="py-3 pl-4 hover:bg-green-600 cursor-pointer rounded-lg">
-          <a className="block" href="/dashboard/humidity">
-            Độ ẩm
-          </a>
-        </li>
-        <li className="py-3 pl-4 hover:bg-green-600 cursor-pointer rounded-lg">
-          <a className="block" href="/dashboard/disease-status">
-            Tình trạng sâu bệnh
-          </a>
-        </li>
+        {items.map((item) => (
+          <li
+            key={item.key}
+            className={`py-3 pl-4 rounded-lg cursor-pointer ${
+              activeItem === item.key
+                ? "bg-gray-300 text-black"
+                : "hover:bg-green-600"
+            }`}
+          >
+            <a className="block" href={item.path}>
+              {item.label}
+            </a>
+          </li>
+        ))}
       </ul>
     </div>
   );

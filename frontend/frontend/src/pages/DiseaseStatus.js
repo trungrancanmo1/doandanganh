@@ -57,7 +57,7 @@ const DiseaseStatus = () => {
       <Header />
       <div className="flex flex-grow">
         {/* Sidebar */}
-        <Sidebar />
+        <Sidebar activeItem="disease-status" />
         {/* Main page */}
         <div className="flex-grow p-6">
           <div className="flex justify-between items-start mb-6">
