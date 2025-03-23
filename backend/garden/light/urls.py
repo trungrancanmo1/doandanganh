@@ -21,6 +21,7 @@ from .views import (
     RetrieveLightBoundView,
     SyncMostRecentLightRecord,
     RetrieveMostRecentLightRecord,
+    DeleteOldestLightRecord,
 )
 
 urlpatterns = [
@@ -28,4 +29,5 @@ urlpatterns = [
     path('bound/get/', RetrieveLightBoundView.as_view(), name='light_bound_retrieve'),
     path('record/sync/', SyncMostRecentLightRecord.as_view(), name='most_recent_light_sync'),
     path('record/get/', RetrieveMostRecentLightRecord.as_view(), name='most_recent_light_retrieve'),
+    path('record/delete/', DeleteOldestLightRecord.as_view(), name='most_recent_light_delete'),
 ]
