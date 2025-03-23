@@ -16,6 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from .views import (
+    UpdateHumidityBoundView,
+    RetrieveHumidityBoundView,
+)
 
 urlpatterns = [
+    path('bound/update/', UpdateHumidityBoundView.as_view(), name='humidity_bound_update'),
+    path('bound/get/', RetrieveHumidityBoundView.as_view(), name='humidity_bound_retrieve'),
 ]
