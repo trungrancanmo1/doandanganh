@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'garden',
     'notification',
     'overview',
+    'temperature',
     'humidity',
     'light',
     'pest',
@@ -197,3 +198,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True   # Temporarily allow all origins
 AUTH_USER_MODEL = 'user.User'
+
+AIO_USERNAME = os.getenv('AIO_USERNAME')
+AIO_KEY      = os.getenv('AIO_KEY')
