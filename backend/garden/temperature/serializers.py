@@ -29,3 +29,14 @@ class TemperatureBoundSerializer(serializers.ModelSerializer):
         if lowest_allowed > highest_allowed:
             raise serializers.ValidationError({'highest_allowed' : 'Upper bound cannot be lower than lower bound'})
         return data
+
+
+class TemperatureRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TemperatureRecord
+        fields = ['timestamp', 'value']
+    
+    def validate_value(self, value):
+        if value < ABSOLUTE_ZERO_IN_CELCIUS:
+            raise serializers.ValidationError('Temperature cannot be lower than absolute zero')
+        return value

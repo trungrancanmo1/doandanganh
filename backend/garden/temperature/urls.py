@@ -16,9 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import UpdateTemperatureBoundView, RetrieveTemperatureBoundView
+from .views import (
+    UpdateTemperatureBoundView,
+    RetrieveTemperatureBoundView,
+    RetrieveMostRecentTemperatureRecord,
+    SyncMostRecentTemperatureRecord,
+)
 
 urlpatterns = [
     path('bound/update/', UpdateTemperatureBoundView.as_view(), name='temperature_bound_update'),
-    path('bound/retrieve/', RetrieveTemperatureBoundView.as_view(), name='temperature_bound_retrieve'),
+    path('bound/get/', RetrieveTemperatureBoundView.as_view(), name='temperature_bound_retrieve'),
+    path('record/get/', RetrieveMostRecentTemperatureRecord.as_view(), name='most_recent_temperature_retrieve'),
+    path('record/sync/', SyncMostRecentTemperatureRecord.as_view(), name='most_recent_temperature_sync')
 ]
