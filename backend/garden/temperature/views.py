@@ -38,14 +38,17 @@ class RetrieveMostRecentTemperatureRecord(views.APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        n = request.query_params.get('n', 1)
-        try:
-            n = int(n)
-        except ValueError:
-            raise exceptions.ValidationError('n must be an integer')
-        if n <= 0:
-            raise exceptions.ValidationError('n must be positive')
-        records = TemperatureRecord.objects.filter(user=self.request.user).order_by('-timestamp')[:n]
+        n = request.query_params.get('n', None)
+        if n is not None:
+            try:
+                n = int(n)
+            except ValueError:
+                raise exceptions.ValidationError('n must be an integer')
+            if n <= 0:
+                raise exceptions.ValidationError('n must be positive')
+        records = TemperatureRecord.objects.filter(user=self.request.user).order_by('-timestamp')
+        if n is not None:
+            records = records[:n]
         serializer = TemperatureRecordSerializer(records, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
