@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import LightBound
+from .models import LightBound, LightRecord
 
 
 class LightBoundSerializer(serializers.ModelSerializer):
@@ -27,3 +27,14 @@ class LightBoundSerializer(serializers.ModelSerializer):
         if lowest_allowed > highest_allowed:
             raise serializers.ValidationError({'highest_allowed' : 'Upper bound cannot be lower than lower bound'})
         return data
+
+
+class LightRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LightRecord
+        fields = ['timestamp', 'value']
+    
+    def validate_value(self, value):
+        if value < 0:
+            raise serializers.ValidationError('Light unit cannot be negative')
+        return value
