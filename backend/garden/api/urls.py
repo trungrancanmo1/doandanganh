@@ -25,6 +25,7 @@ urlpatterns = [
     path('overview/', include('overview.urls')),
     path('temperature/', include('temperature.urls')),
     path('humidity/', include('humidity.urls')),
+    path('moisture/', include('moisture.urls')),
     path('light/', include('light.urls')),
     path('pest/', include('pest.urls')),
 ]

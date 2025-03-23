@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'overview',
     'temperature',
     'humidity',
+    'moisture',
     'light',
     'pest',
     'user',
