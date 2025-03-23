@@ -1,0 +1,344 @@
+openapi: "3.0.0"
+info:
+  title: "Smart Farm API"
+  description: "A simple Flask-RESTful API with Swagger UI"
+  version: "1.0.0"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /api/v1/tests:
+    get:
+      summary: "Get a test API"
+      description: "An initial test API"
+      tags:
+        - "Test"
+      responses:
+        "200":
+          description: "A 'Hello World!' string"
+  /api/v1/auth/github:
+    post:
+      summary: "GitHub Login"
+      description: "Login endpoint that validates user credentials and returns an access token."
+      tags:
+        - "Authentication"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                firebase_jwt:
+                  type: "string"
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      responses:
+        "200":
+          description: "Successful login, returns JWT token"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  access_token:
+                    type: "string"
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  user_id:
+                    type: "string"
+                    example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+                  email:
+                    type: "string"
+                    example: "user@example.com"
+                  role:
+                    type: "string"
+                    example: "admin"
+  /api/v1/inferences:
+    get:
+      summary: "Getting the inference for overview page"
+      description: "Endpoint to getting inference based on user_id and sensor_group"
+      tags:
+        - "Inference"
+      parameters:
+        - name: "user_id"
+          in: "query"
+          description: "User ID for inference"
+          required: true
+          schema:
+            type: "string"
+            example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+        - name: "sensor_group"
+          in: "query"
+          description: "Sensor group for inference"
+          required: true
+          schema:
+            type: "string"
+            example: "group1"
+      responses:
+        "200":
+          description: "Successful inference result"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  sensor_group:
+                    type: "string"
+                    example: "group1"
+                  time_stamp:
+                    type: "string"
+                    format: "date-time"
+                    example: "2023-03-15T12:34:56Z"
+                  inferences:
+                    type: "object"
+                    properties:
+                      temperature:
+                        type: "object"
+                        properties:
+                          value:
+                            type: "number"
+                            example: 25.5
+                          status:
+                            type: "string"
+                            example: "normal"
+                      light:
+                        type: "object"
+                        properties:
+                          value:
+                            type: "number"
+                            example: 300
+                          status:
+                            type: "string"
+                            example: "normal"
+                      humidity:
+                        type: "object"
+                        properties:
+                          value:
+                            type: "number"
+                            example: 60
+                          status:
+                            type: "string"
+                            example: "normal"
+                      camera:
+                        type: "object"
+                        properties:
+                          value:
+                            type: "string"
+                            example: "image_data_base64"
+                          status:
+                            type: "string"
+                            example: "normal"
+                          image_processed:
+                            type: "boolean"
+                            example: true
+                          insect_attack_detected:
+                            type: "boolean"
+                            example: false
+        "400":
+          description: "Invalid input data"
+      security:
+        - bearerAuth: []
+  /api/v1/statistics:
+    get:
+      summary: "Getting the values of the sensors from a sensor_group of a user"
+      description: "Endpoint to get the newest values of the sensors from a sensor_group of a user"
+      tags:
+        - "Statistics"
+      parameters:
+        - name: "user_id"
+          in: "query"
+          description: "User ID for retrieving sensor data"
+          required: true
+          schema:
+            type: "string"
+            example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+        - name: "sensor_group"
+          in: "query"
+          description: "Sensor group to retrieve data from"
+          required: true
+          schema:
+            type: "string"
+            example: "group1"
+      responses:
+        "200":
+          description: "Successfully retrieved the sensor data"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  temperature:
+                    type: "object"
+                    properties:
+                      value:
+                        type: "number"
+                        example: 30
+                      time_stamp:
+                        type: "string"
+                        format: "date-time"
+                        example: "2023-03-15T12:34:56Z"
+                      sensor_id:
+                        type: "string"
+                        example: "sensor101"
+                      location:
+                        type: "string"
+                        example: "HCMUT.H6.812"
+                      metric:
+                        type: "string"
+                        example: "temperature"
+                      unit:
+                        type: "string"
+                        example: "C"
+                  humidity:
+                    type: "object"
+                    properties:
+                      value:
+                        type: "number"
+                        example: 60
+                      time_stamp:
+                        type: "string"
+                        format: "date-time"
+                        example: "2023-03-15T12:34:56Z"
+                      sensor_id:
+                        type: "string"
+                        example: "sensor102"
+                      location:
+                        type: "string"
+                        example: "HCMUT.H6.812"
+                      metric:
+                        type: "string"
+                        example: "humidity"
+                      unit:
+                        type: "string"
+                        example: "%"
+                  light:
+                    type: "object"
+                    properties:
+                      value:
+                        type: "number"
+                        example: 300
+                      time_stamp:
+                        type: "string"
+                        format: "date-time"
+                        example: "2023-03-15T12:34:56Z"
+                      sensor_id:
+                        type: "string"
+                        example: "sensor103"
+                      location:
+                        type: "string"
+                        example: "HCMUT.H6.812"
+                      metric:
+                        type: "string"
+                        example: "light"
+                      unit:
+                        type: "string"
+                        example: "lux"
+                  image: 
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        example: https://example.com/image.png
+                      time_stamp:
+                        type: "string"
+                        format: "date-time"
+                        example: "2023-03-15T12:34:56Z"
+                      camera:
+                        type: string
+                        example: camera101
+                      location:
+                        type: "string"
+                        example: "HCMUT.H6.812"
+        "400":
+          description: "Invalid input data"
+      security:
+        - bearerAuth: []
+  /api/v1/histories:
+    get:
+      summary: "Retrieve historical sensor data"
+      description: "Endpoint to retrieve historical data for a specific sensor within a given time range."
+      tags:
+        - "History"
+      parameters:
+        - name: "user_id"
+          in: "query"
+          description: "User ID for retrieving historical data"
+          required: true
+          schema:
+            type: "string"
+            example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+        - name: "sensor_id"
+          in: "query"
+          description: "Sensor ID for retrieving historical data"
+          required: true
+          schema:
+            type: "string"
+            example: "sensor101"
+        - name: "start"
+          in: "query"
+          description: "Start timestamp for the historical data range"
+          required: true
+          schema:
+            type: "string"
+            format: "date-time"
+            example: "2023-03-15T12:00:00Z"
+        - name: "end"
+          in: "query"
+          description: "End timestamp for the historical data range"
+          required: true
+          schema:
+            type: "string"
+            format: "date-time"
+            example: "2023-03-15T12:34:56Z"
+      responses:
+        "200":
+          description: "Successfully retrieved historical sensor data"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  metric:
+                    type: "string"
+                    example: "temperature"
+                  unit:
+                    type: "string"
+                    example: "C"
+                  start:
+                    type: "string"
+                    format: "date-time"
+                    example: "2023-03-15T12:34:56Z"
+                  end:
+                    type: "string"
+                    format: "date-time"
+                    example: "2023-03-15T12:34:56Z"
+                  sum:
+                    type: "number"
+                    example: 10000
+                  location:
+                    type: "string"
+                    example: "HCMUT.H6.812"
+                  status:
+                    type: "string"
+                    example: "on"
+                  feed_id:
+                    type: "string"
+                    example: "trungdunglebui17112004@gmail.com_sensor101"
+                  records:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        timestamp:
+                          type: "string"
+                          format: "date-time"
+                          example: "2023-03-15T12:00:00Z"
+                        value:
+                          type: "number"
+                          example: 25.3
+        "400":
+          description: "Invalid input data"
+      security:
+        - bearerAuth: []
