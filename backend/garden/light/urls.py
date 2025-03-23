@@ -16,6 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from .views import (
+    UpdateLightBoundView,
+    RetrieveLightBoundView,
+)
 
 urlpatterns = [
+    path('bound/update/', UpdateLightBoundView.as_view(), name='light_bound_update'),
+    path('bound/get/', RetrieveLightBoundView.as_view(), name='light_bound_retrieve'),
 ]
