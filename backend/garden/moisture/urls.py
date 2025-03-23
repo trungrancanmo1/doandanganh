@@ -20,10 +20,12 @@ from .views import (
     UpdateMoistureBoundView,
     RetrieveMoistureBoundView,
     SyncMostRecentMoistureRecord,
+    RetrieveMostRecentMoistureRecord,
 )
 
 urlpatterns = [
     path('bound/update/', UpdateMoistureBoundView.as_view(), name='moisture_bound_update'),
     path('bound/get/', RetrieveMoistureBoundView.as_view(), name='moisture_bound_retrieve'),
     path('record/sync/', SyncMostRecentMoistureRecord.as_view(), name='most_recent_moisture_sync'),
+    path('record/get/', RetrieveMostRecentMoistureRecord.as_view(), name='most_recent_moisture_retrieve'),
 ]
