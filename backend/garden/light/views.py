@@ -121,6 +121,6 @@ class DeleteOldestLightRecord(views.APIView):
             record.delete()
         
         return Response(
-            {'message': f"Deleted {count} records"},
+            {'message': f"Deleted {count} oldest records"},
             status=status.HTTP_200_OK,
         )
