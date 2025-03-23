@@ -20,10 +20,12 @@ from .views import (
     UpdateHumidityBoundView,
     RetrieveHumidityBoundView,
     SyncMostRecentHumidityRecord,
+    RetrieveMostRecentHumidityRecord,
 )
 
 urlpatterns = [
     path('bound/update/', UpdateHumidityBoundView.as_view(), name='humidity_bound_update'),
     path('bound/get/', RetrieveHumidityBoundView.as_view(), name='humidity_bound_retrieve'),
     path('record/sync/', SyncMostRecentHumidityRecord.as_view(), name='most_recent_humidity_sync'),
+    path('record/get/', RetrieveMostRecentHumidityRecord.as_view(), name='most_recent_humidity_retrieve'),
 ]
