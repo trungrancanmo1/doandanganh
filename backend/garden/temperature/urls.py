@@ -20,6 +20,7 @@ from .views import (
     UpdateTemperatureBoundView,
     RetrieveTemperatureBoundView,
     RetrieveMostRecentTemperatureRecord,
+    RetrieveTemperatureRecordListView,
     SyncMostRecentTemperatureRecord,
     DeleteOldestTemperatureRecord,
 )
@@ -27,7 +28,8 @@ from .views import (
 urlpatterns = [
     path('bound/update/', UpdateTemperatureBoundView.as_view(), name='temperature_bound_update'),
     path('bound/get/', RetrieveTemperatureBoundView.as_view(), name='temperature_bound_retrieve'),
-    path('record/get/', RetrieveMostRecentTemperatureRecord.as_view(), name='most_recent_temperature_retrieve'),
+    path('record/get/recent/', RetrieveMostRecentTemperatureRecord.as_view(), name='most_recent_temperature_retrieve'),
+    path('record/get/', RetrieveTemperatureRecordListView.as_view(), name='temperature_records_retrieve'),
     path('record/sync/', SyncMostRecentTemperatureRecord.as_view(), name='most_recent_temperature_sync'),
     path('record/delete/', DeleteOldestTemperatureRecord.as_view(), name='oldest_temperature_delete'),
 ]

@@ -3,6 +3,7 @@ from rest_framework import generics, views, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import exceptions
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from .serializers import TemperatureBoundSerializer, TemperatureRecordSerializer
 from .models import TemperatureBound, TemperatureRecord
 from django.conf import settings
@@ -51,6 +52,15 @@ class RetrieveMostRecentTemperatureRecord(views.APIView):
             records = records[:n]
         serializer = TemperatureRecordSerializer(records, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RetrieveTemperatureRecordListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TemperatureRecordSerializer
+    pagination_class = PageNumberPagination
+    
+    def get_queryset(self):
+        return TemperatureRecord.objects.filter(user=self.request.user)
 
 
 class SyncMostRecentTemperatureRecord(views.APIView):
