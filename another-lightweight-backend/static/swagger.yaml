@@ -132,7 +132,7 @@ paths:
                             example: "normal"
                           image_processed:
                             type: "boolean"
-                            example: true
+                            example: "on"
                           insect_attack_detected:
                             type: "boolean"
                             example: false
@@ -579,7 +579,7 @@ paths:
                 status:
                   type: "boolean"
                   description: "Status of the sensor (on/off)"
-                  example: true
+                  example: "on"
                 unit:
                   type: "string"
                   description: "Unit of measurement for the sensor"
@@ -615,7 +615,7 @@ paths:
                   status:
                     type: "boolean"
                     description: "Status of the sensor"
-                    example: true
+                    example: "on"
                   unit:
                     type: "string"
                     description: "Unit of measurement"
@@ -684,7 +684,7 @@ paths:
                         status:
                           type: "boolean"
                           description: "Status of the sensor (on/off)"
-                          example: true
+                          example: "on"
                         unit:
                           type: "string"
                           description: "Unit of measurement for the sensor"
@@ -785,7 +785,7 @@ paths:
                 status:
                   type: "boolean"
                   description: "Status of the actuator (on/off)"
-                  example: true
+                  example: "on"
                 actuator_id:
                   type: "string"
                   description: "Unique identifier for the actuator"
@@ -817,7 +817,7 @@ paths:
                   status:
                     type: "boolean"
                     description: "Status of the actuator"
-                    example: true
+                    example: "on"
                   command_feed_id:
                     type: "string"
                     description: "Feed ID for actuator commands"
@@ -906,7 +906,7 @@ paths:
                         status:
                           type: "boolean"
                           description: "Status of the actuator (on/off)"
-                          example: true
+                          example: "on"
                         command_feed_id:
                           type: "string"
                           description: "Feed ID for actuator commands"

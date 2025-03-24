@@ -25,7 +25,7 @@ class SensorListResource(Resource):
         TYPE = body.get('type')
         DATA = 'data'
 
-        feed_id = '-'.join([ORG, USERS, user_id.lower(), ENVS, env_id.lower(), TYPE.lower(), SENSORS, body['sensor_id'].lower(), DATA])
+        topic = '/'.join([ORG, user_id, env_id, body['sensor_id'], TYPE, DATA])
 
         data = {
             'user_id' : user_id,
@@ -34,7 +34,7 @@ class SensorListResource(Resource):
             'type' : body['type'],
             'status' : body['status'],
             'unit' : body['unit'],
-            'feed_id' : feed_id
+            'topic' : topic
         }
 
         # TODO check for dupplication in sensors
@@ -55,7 +55,7 @@ class SensorListResource(Resource):
             'type' : body['type'],
             'status' : body['status'],
             'unit' : body['unit'],
-            'feed_id' : feed_id
+            'topic' : topic
         }
 
         return response, HTTPStatus.CREATED

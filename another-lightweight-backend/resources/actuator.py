@@ -26,8 +26,8 @@ class ActuatorListResource(Resource):
         COMMAND = 'command'
         STATUS = 'status'
 
-        command_feed_id = '-'.join([ORG, USERS, user_id.lower(), ENVS, env_id.lower(), TYPE.lower(), ACTUATORS, body['actuator_id'].lower(), COMMAND])
-        status_feed_id = '-'.join([ORG, USERS, user_id.lower(), ENVS, env_id.lower(), TYPE.lower(), ACTUATORS, body['actuator_id'].lower(), STATUS])
+        command_topic = '/'.join([ORG, user_id, env_id, body['actuator_id'], TYPE, COMMAND])
+        status_topic = '/'.join([ORG, user_id, env_id, body['actuator_id'], TYPE, STATUS])
 
         data = {
             'user_id': user_id,
@@ -35,8 +35,8 @@ class ActuatorListResource(Resource):
             'actuator_id': body['actuator_id'],
             'type': body['type'],
             'status': body['status'],
-            'command_feed_id': command_feed_id,
-            'status_feed_id': status_feed_id,
+            'command_topic': command_topic,
+            'status_topic': status_topic,
             'last_command': '',
             'auto_mode' : False,
             'min' : 0,
@@ -60,8 +60,8 @@ class ActuatorListResource(Resource):
             'actuator_id': body['actuator_id'],
             'type': body['type'],
             'status': body['status'],
-            'command_feed_id' : command_feed_id,
-            'status_feed_id' : status_feed_id,
+            'command_topic' : command_topic,
+            'command_topic' : status_topic,
             'last_command' : '',
             'auto_mode' : False,
             'min' : 0,
