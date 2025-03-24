@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from adafruitclient import add_feed
+from adafruitio_client import add_feed
 from flask import current_app
 
 

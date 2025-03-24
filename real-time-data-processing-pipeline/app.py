@@ -1,6 +1,6 @@
 from flask import Flask
 import threading
-from adafruitclient import mqtt_listener
+from adafruitio_client import mqtt_listener
 from routes import sensor_bp
 from routes import feed_bp
 

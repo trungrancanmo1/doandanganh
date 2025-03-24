@@ -30,20 +30,16 @@ def connected(client : MQTTClient):
     '''
     - Query the database and subscribe for all activated sensors
     '''
-    # subcribe for these feeds
-    # for feed_id in FEEDS.values():
-    #     client.subscribe(feed_id=feed_id)
-    #     logger.info(f'Subscribe to {feed_id}')
-    topics = firestore_db\
+    feed_ids = firestore_db\
     .collection('sensors')\
     .where(filter=FieldFilter('status', '==', True))\
-    .select(['topic'])\
+    .select(['feed_id'])\
     .get()
 
-    for topic in topics:
-        topic = topic.to_dict().get('topic')
-        client.subscribe(topic)
-        logger.info(f'Subscribe to { topic }')
+    for feed_id in feed_ids:
+        feed_id = feed_id.to_dict().get('feed_id')
+        client.subscribe(feed_id)
+        logger.info(f'Subscribe to { feed_id }')
 
 
 def message_v1(client : MQTTClient, feed_id : str, new_value):
