@@ -3,6 +3,7 @@ from rest_framework import generics, views, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import exceptions
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from .serializers import LightBoundSerializer, LightRecordSerializer
 from .models import LightBound, LightRecord
 from django.conf import settings
@@ -98,6 +99,15 @@ class RetrieveMostRecentLightRecord(views.APIView):
             records = records[:n]
         serializer = LightRecordSerializer(records, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RetrieveLightRecordListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = LightRecordSerializer
+    pagination_class = PageNumberPagination
+    
+    def get_queryset(self):
+        return LightRecord.objects.filter(user=self.request.user)
 
 
 class DeleteOldestLightRecord(views.APIView):
