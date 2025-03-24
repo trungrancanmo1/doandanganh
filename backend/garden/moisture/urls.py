@@ -17,17 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from .views import (
-    UpdateHumidityBoundView,
-    RetrieveHumidityBoundView,
-    SyncMostRecentHumidityRecord,
-    RetrieveMostRecentHumidityRecord,
-    DeleteOldestHumidityRecord,
+    UpdateMoistureBoundView,
+    RetrieveMoistureBoundView,
+    SyncMostRecentMoistureRecord,
+    RetrieveMostRecentMoistureRecord,
+    DeleteOldestMoistureRecord,
 )
 
 urlpatterns = [
-    path('bound/update/', UpdateHumidityBoundView.as_view(), name='humidity_bound_update'),
-    path('bound/get/', RetrieveHumidityBoundView.as_view(), name='humidity_bound_retrieve'),
-    path('record/sync/', SyncMostRecentHumidityRecord.as_view(), name='most_recent_humidity_sync'),
-    path('record/get/', RetrieveMostRecentHumidityRecord.as_view(), name='most_recent_humidity_retrieve'),
-    path('record/delete/', DeleteOldestHumidityRecord.as_view(), name='oldest_humidity_delete'),
+    path('bound/update/', UpdateMoistureBoundView.as_view(), name='moisture_bound_update'),
+    path('bound/get/', RetrieveMoistureBoundView.as_view(), name='moisture_bound_retrieve'),
+    path('record/sync/', SyncMostRecentMoistureRecord.as_view(), name='most_recent_moisture_sync'),
+    path('record/get/', RetrieveMostRecentMoistureRecord.as_view(), name='most_recent_moisture_retrieve'),
+    path('record/delete/', DeleteOldestMoistureRecord.as_view(), name='oldest_moisture_delete'),
 ]

@@ -16,18 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import (
-    UpdateHumidityBoundView,
-    RetrieveHumidityBoundView,
-    SyncMostRecentHumidityRecord,
-    RetrieveMostRecentHumidityRecord,
-    DeleteOldestHumidityRecord,
-)
+from . import views
 
 urlpatterns = [
-    path('bound/update/', UpdateHumidityBoundView.as_view(), name='humidity_bound_update'),
-    path('bound/get/', RetrieveHumidityBoundView.as_view(), name='humidity_bound_retrieve'),
-    path('record/sync/', SyncMostRecentHumidityRecord.as_view(), name='most_recent_humidity_sync'),
-    path('record/get/', RetrieveMostRecentHumidityRecord.as_view(), name='most_recent_humidity_retrieve'),
-    path('record/delete/', DeleteOldestHumidityRecord.as_view(), name='oldest_humidity_delete'),
+    # path('', views.get_routes),
+    path('user/', include('user.urls')),
+    path('notification/', include('notification.urls')),
+    path('overview/', include('overview.urls')),
+    path('temperature/', include('temperature.urls')),
+    path('humidity/', include('humidity.urls')),
+    path('moisture/', include('moisture.urls')),
+    path('light/', include('light.urls')),
+    path('pest/', include('pest.urls')),
 ]
