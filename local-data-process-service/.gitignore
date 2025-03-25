@@ -55,4 +55,4 @@ gunicorn.error.log
 celerybeat-schedule
 celerybeat.pid
 
-service_account_key.json
+**/service_account_key.json
