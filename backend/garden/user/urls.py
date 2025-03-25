@@ -16,12 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from .views import RegisterView, UserTokenObtainPairView, UpdateAvatarView
 from rest_framework_simplejwt.views import TokenRefreshView
+from .views import (
+    RegisterView,
+    UserTokenObtainPairView,
+    UserProfileView,
+    UserAvatarUploadView,
+)
 
 urlpatterns = [
     path('signup/', RegisterView.as_view(), name='signup'),
     path('login/', UserTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('update-avatar/', UpdateAvatarView.as_view(), name='update_avatar'),
+    path('profile/get/', UserProfileView.as_view(), name='user_profile_retrieve'),
+    path('profile/avatar/upload/', UserAvatarUploadView.as_view(), name='user_avatar_upload'),
 ]

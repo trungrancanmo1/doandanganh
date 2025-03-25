@@ -21,6 +21,7 @@ from .views import (
     RetrieveMoistureBoundView,
     SyncMostRecentMoistureRecord,
     RetrieveMostRecentMoistureRecord,
+    RetrieveMoistureRecordListView,
     DeleteOldestMoistureRecord,
 )
 
@@ -28,6 +29,7 @@ urlpatterns = [
     path('bound/update/', UpdateMoistureBoundView.as_view(), name='moisture_bound_update'),
     path('bound/get/', RetrieveMoistureBoundView.as_view(), name='moisture_bound_retrieve'),
     path('record/sync/', SyncMostRecentMoistureRecord.as_view(), name='most_recent_moisture_sync'),
-    path('record/get/', RetrieveMostRecentMoistureRecord.as_view(), name='most_recent_moisture_retrieve'),
+    path('record/get/recent/', RetrieveMostRecentMoistureRecord.as_view(), name='most_recent_moisture_retrieve'),
+    path('record/get/', RetrieveMoistureRecordListView.as_view(), name='moisture_records_retrieve'),
     path('record/delete/', DeleteOldestMoistureRecord.as_view(), name='oldest_moisture_delete'),
 ]

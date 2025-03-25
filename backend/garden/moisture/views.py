@@ -3,6 +3,7 @@ from rest_framework import generics, views, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import exceptions
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from .serializers import MoistureBoundSerializer, MoistureRecordSerializer
 from .models import MoistureBound, MoistureRecord
 from django.conf import settings
@@ -98,6 +99,15 @@ class RetrieveMostRecentMoistureRecord(views.APIView):
             records = records[:n]
         serializer = MoistureRecordSerializer(records, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RetrieveMoistureRecordListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MoistureRecordSerializer
+    pagination_class = PageNumberPagination
+    
+    def get_queryset(self):
+        return MoistureRecord.objects.filter(user=self.request.user)
 
 
 class DeleteOldestMoistureRecord(views.APIView):

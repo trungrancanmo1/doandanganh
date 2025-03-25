@@ -16,6 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from .views import (
+    UploadPlantImageView,
+    RetrievePlantImageListView,
+)
 
 urlpatterns = [
+    path('image/upload/', UploadPlantImageView.as_view(), name='plant_image_upload'),
+    path('image/get/', RetrievePlantImageListView.as_view(), name='plant_image_retrieve'),
 ]

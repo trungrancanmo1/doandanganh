@@ -3,6 +3,7 @@ from rest_framework import generics, views, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import exceptions
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from .serializers import HumidityBoundSerializer, HumidityRecordSerializer
 from .models import HumidityBound, HumidityRecord
 from django.conf import settings
@@ -98,6 +99,15 @@ class RetrieveMostRecentHumidityRecord(views.APIView):
             records = records[:n]
         serializer = HumidityRecordSerializer(records, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class RetrieveHumidityRecordListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = HumidityRecordSerializer
+    pagination_class = PageNumberPagination
+    
+    def get_queryset(self):
+        return HumidityRecord.objects.filter(user=self.request.user)
 
 
 class DeleteOldestHumidityRecord(views.APIView):
