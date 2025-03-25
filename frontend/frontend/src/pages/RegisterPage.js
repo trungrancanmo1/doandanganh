@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Logo from "../assets/LogoWebsite.png";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    fullname: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -15,37 +17,75 @@ const RegisterPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert("Mật khẩu xác nhận không khớp!");
       return;
     }
-    console.log("Đăng ký thành công:", formData);
-    navigate("/login"); // Chuyển hướng đến trang đăng nhập sau khi đăng ký
+
+    try {
+      const res = await axios.post("http://127.0.0.1:8000/api/user/signup/", {
+        email: formData.email,
+        password: formData.password,
+        username: formData.email, // hoặc đặt logic riêng
+        first_name: formData.firstName,
+        last_name: formData.lastName
+      });
+  
+      console.log("Đăng ký thành công:", res.data);
+      navigate("/login");
+    } catch (err) {
+      console.error("Lỗi đăng ký:", err.response?.data || err.message);
+      alert("Đăng ký thất bại: " + (err.response?.data?.detail || "Lỗi không xác định"));
+    }
+
+    // Tạo fullname nếu cần
+    const fullName = `${formData.lastName} ${formData.firstName}`;
+    console.log("Đăng ký thành công:", {
+      ...formData,
+      fullName,
+    });
   };
 
   return (
     <div className="flex h-screen justify-center items-center">
-      {/* Phần Form đăng ký */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-6 md:px-16">
         <img src={Logo} alt="SmartSprout" className="w-24 mb-4" />
         <h2 className="text-3xl font-bold text-green-500 font-dancing">SmartSprout</h2>
         <p className="text-gray-500 mb-6">Tạo tài khoản mới để bắt đầu</p>
 
         <form className="w-full max-w-md" onSubmit={handleSubmit}>
-          <label className="block text-gray-700 font-medium mb-1">Họ và tên</label>
-          <input
-            type="text"
-            name="fullname"
-            placeholder="Nhập họ tên của bạn"
-            className="w-full p-3 border rounded-lg mb-4"
-            value={formData.fullname}
-            onChange={handleChange}
-            required
-          />
-
+          <div className="flex justify-between gap-4 mb-4">
+            <div className="w-1/2">
+              <label className="block text-gray-700 font-medium mb-1">Họ</label>
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Họ"
+                className="w-full p-3 border rounded-lg"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="w-1/2">
+              <label className="block text-gray-700 font-medium mb-1">Tên</label>
+              <input
+                type="text"
+                name="firstName"
+                placeholder="Tên"
+                className="w-full p-3 border rounded-lg"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
           <label className="block text-gray-700 font-medium mb-1">Email</label>
+          <p className="text-sm italic text-gray-500 mb-2">
+            Email sẽ không thể thay đổi sau này
+          </p>
           <input
             type="email"
             name="email"
