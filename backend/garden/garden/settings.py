@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     'user',
     
     'illuminator',
+
+    'utils'
 ]
 
 MIDDLEWARE = [
@@ -217,3 +219,79 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 FRONTEND_URL = os.getenv('FRONTEND_URL')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+#==========================
+# INFLUX DATABASE
+#==========================
+INFLUXDB = {
+    "host": "https://eu-central-1-1.aws.cloud2.influxdata.com",  # Change to your InfluxDB host
+    "token": os.getenv('INFLUXDB_TOKEN'),
+    "org": "hcmut-student",
+    "bucket": "test-bucket",
+}
+
+
+#==========================
+# 💀💀💀💀💀💀💀💀💀💀
+# 🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫
+# ASSUME THERE IS ONE USER
+#==========================
+APP_NAME        ='hcmut-smart-farm'
+USER = {
+    'user_id' : 'VVRsnPoAEqSbUa9QLwXLgj2D9Zx2',
+    'env_id' : 'my_simple_garden',
+    'sensor_id' : [
+        'sensor-101',
+        'sensor-102',
+        'sensor-103'
+    ],
+    'actuator_id' : [
+        'actuator-101',
+        'actuator-102',
+        'actuator-103',
+        'actuator-104'
+    ],
+    'sensor_type' : [
+        'temperature',
+        'humidity',
+        'light'
+    ],
+    'actuator_type' : [
+        'fan',
+        'pump',
+        'light',
+        'heater'
+    ],
+}
+
+TOPIC_TYPE = [
+    'command',
+    'data',
+    'status'
+]
+
+
+def make_topic(device_id : str, topic_type : str, device_type : str) -> str:
+    '''
+    - device_id must be in SENSOR_ID and ACTUATOR_ID
+    - topic_type : 'command', 'data'
+    - device_type must be in SENSOR_TYPE and ACTUATOR_TYPE
+
+    example :
+    - hcmut-smart-farm/VVRsnPoAEqSbUa9QLwXLgj2D9Zx2/my_simple_garden/actuator-103/cooler/command
+    - hcmut-smart-farm/VVRsnPoAEqSbUa9QLwXLgj2D9Zx2/my_simple_garden/sensor-101/temperature/data
+    '''
+    topic = '/'.join (
+        [
+            APP_NAME,
+            USER['user_id'],
+            USER['env_id'],
+            device_id,
+            device_type,
+            topic_type
+        ]
+    )
+
+    # print(topic)
+    return topic

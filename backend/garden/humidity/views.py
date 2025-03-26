@@ -12,6 +12,9 @@ from aio_helper.client import get_aio_client
 from aio_helper.feed import get_or_create_feed
 from aio_helper.data import get_unread_data_from_feed
 
+from utils import ifdb_client
+from garden.settings import INFLUXDB
+
 # Create your views here.
 
 class UpdateHumidityBoundView(generics.UpdateAPIView):
@@ -35,10 +38,15 @@ class RetrieveHumidityBoundView(generics.RetrieveAPIView):
             raise exceptions.NotFound('humidity bound not found for this user')
 
 
+#==========================
+# NOTE: ⛓️‍💥 DEPRECATED
+#==========================
 class SyncMostRecentHumidityRecord(views.APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
+        raise exceptions.APIException('This endpoint is deprecated and should not be used.')
+
         aio_username = settings.AIO_USERNAME
         aio_key = settings.AIO_KEY
         try:
@@ -82,6 +90,9 @@ class SyncMostRecentHumidityRecord(views.APIView):
             )
 
 
+#===================================
+# INFLUX DATABASE ADDED
+#===================================
 class RetrieveMostRecentHumidityRecord(views.APIView):
     permission_classes = [IsAuthenticated]
     
@@ -94,13 +105,37 @@ class RetrieveMostRecentHumidityRecord(views.APIView):
                 raise exceptions.ValidationError('n must be an integer')
             if n <= 0:
                 raise exceptions.ValidationError('n must be positive')
-        records = HumidityRecord.objects.filter(user=self.request.user).order_by('-timestamp')
-        if n is not None:
-            records = records[:n]
+            
+        # records = HumidityRecord.objects.filter(user=self.request.user).order_by('-timestamp')
+
+        #===================================
+        # INFLUX DATABASE
+        #===================================
+        query = f'''
+        SELECT time as timestamp, value
+        FROM 'sensor_data'
+        WHERE type = 'humidity'
+        ORDER BY time DESC
+        LIMIT {int(n)}
+        '''
+
+        # if n is not None:
+        #     records = records[:n]
+
+        table = ifdb_client.query(query=query, database=INFLUXDB['bucket'])
+        data_frame = table.to_pandas()
+        data_list = data_frame.to_dict(orient='records')
+        #===================================
+        # INFLUX DATABASE
+        #===================================
+        
+        return Response(data_list, status=status.HTTP_200_OK)
+
         serializer = HumidityRecordSerializer(records, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# NOTE: ⚠️should not be used (use get/recent instead)
 class RetrieveHumidityRecordListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = HumidityRecordSerializer
@@ -110,6 +145,7 @@ class RetrieveHumidityRecordListView(generics.ListAPIView):
         return HumidityRecord.objects.filter(user=self.request.user)
 
 
+# NOTE: InfluxDB has its own retention policy
 class DeleteOldestHumidityRecord(views.APIView):
     permission_classes = [IsAuthenticated]
     
