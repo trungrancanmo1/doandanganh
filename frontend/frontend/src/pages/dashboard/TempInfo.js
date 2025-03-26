@@ -223,7 +223,7 @@ const DashboardTempPage = () => {
           </div>
 
           {/* Chế độ điều chỉnh */}
-          <h2 className="text-xl font-bold mt-6">Chế độ điều chỉnh</h2>
+          <h2 className="text-xl font-bold mt-6 mb-2">Chế độ điều chỉnh</h2>
           <div className="grid grid-cols-2 gap-x-2 w-[50%] font-bold">
             <div className="p-4 py-6 bg-white border shadow rounded-lg flex items-center">
               <input type="radio" name="temp-mode" className="mr-2" />

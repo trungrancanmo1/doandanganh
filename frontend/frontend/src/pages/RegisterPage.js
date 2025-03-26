@@ -28,7 +28,7 @@ const RegisterPage = () => {
       const res = await axios.post("http://127.0.0.1:8000/api/user/signup/", {
         email: formData.email,
         password: formData.password,
-        username: formData.email, // hoặc đặt logic riêng
+        username: formData.email.split('@')[0],
         first_name: formData.firstName,
         last_name: formData.lastName
       });

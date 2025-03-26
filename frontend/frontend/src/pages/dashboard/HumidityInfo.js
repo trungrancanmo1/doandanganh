@@ -214,7 +214,7 @@ const DashboardHumidityPage = () => {
           </div>
 
           {/* Chế độ điều chỉnh */}
-          <h2 className="text-xl font-bold mt-6">Chế độ điều chỉnh</h2>
+          <h2 className="text-xl font-bold mt-6 mb-2">Chế độ điều chỉnh</h2>
           <div className="grid grid-cols-2 gap-x-2 w-[50%] font-bold">
             <div className="p-4 py-6 bg-white border shadow rounded-lg flex items-center">
               <input type="radio" name="light-mode" className="mr-2" />
@@ -227,7 +227,7 @@ const DashboardHumidityPage = () => {
           </div>
 
           {/* Điều chỉnh bơm nước */}
-          <h2 className="text-xl font-bold mt-6">Điều chỉnh bơm nước</h2>
+          <h2 className="text-xl font-bold mt-6 mb-2">Điều chỉnh bơm nước</h2>
           <div className="w-48 bg-white border shadow rounded-lg flex items-center p-4 py-6">
             <label className="inline-flex items-center cursor-pointer">
               <input type="checkbox" value="" className="sr-only peer" />
@@ -237,22 +237,15 @@ const DashboardHumidityPage = () => {
           </div>
 
           {/* Lịch sử hoạt động máy bơm */}
-          <h2 className="text-xl font-bold mt-6 mb-2">Lịch sử hoạt động máy bơm</h2>
-          <div className="w-[60%] border shadow rounded-lg bg-white">
+          <h2 className="text-xl font-bold mb-2">Lịch sử hoạt động máy bơm nước</h2>
+          <div className="w-[48%] border rounded-lg shadow-md bg-white">
             {pumpHistoryData.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center px-4 py-3 border-b last:border-none"
-              >
-                <span className="mr-2 pl-2">🕒</span>
-                <span className="text-gray-500 text-sm w-[20%]">{item.time}</span>
-                <span
-                  className={`ml-auto font-semibold ${
-                    item.status === "Bật" ? "text-green-600" : "text-red-600"
-                  }`}
-                >
-                  {item.status}
-                </span>
+              <div key={index} className="flex items-center px-4 py-3 border-b last:border-none">
+                <span className="mr-2 text-lg">🚿</span>
+                <div className="flex-grow">
+                  <p className="text-sm font-semibold">Thời gian: {item.time}</p>
+                  <p className="text-sm">Trạng thái: {item.status}</p>
+                </div>
               </div>
             ))}
           </div>

@@ -7,13 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 
-const lightHistoryData = [
-  { time: "14:00", status: "Bật" },
-  { time: "13:00", status: "Tắt" },
-  { time: "12:00", status: "Bật" },
-  { time: "11:00", status: "Tắt" },
-];
-
 const DashboardLightPage = () => {
   const [lightBound, setLightBound] = useState({
     lowest: null,
@@ -23,10 +16,14 @@ const DashboardLightPage = () => {
   const [editing, setEditing] = useState(false);
   const [editValues, setEditValues] = useState({ lowest: "", highest: "" });
   const [error, setError] = useState(null);
-
   const [currentLight, setCurrentLight] = useState(null);
-
   const navigate = useNavigate();
+  const [isManualMode, setIsManualMode] = useState(null);
+  const [lightHistory, setLightHistory] = useState([]);
+  const [lightOn, setLightOn] = useState(false);
+  const [lightControlError, setLightControlError] = useState(null);
+
+
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -73,12 +70,82 @@ const DashboardLightPage = () => {
         console.error("Lỗi khi lấy ánh sáng hiện tại:", err);
       }
     };
+    const fetchLightMode = async () => {
+      try {
+        const res = await axiosInstance.get("/light/control/mode/");
+        setIsManualMode(res.data.manual);
+      } catch (err) {
+        console.error("Lỗi khi lấy chế độ điều chỉnh:", err);
+      }
+    };
 
+    const fetchLightHistory = async () => {
+      try {
+        let url = "/light/control/illuminator/get/";
+        const allResults = [];
+    
+        // Gọi API nhiều lần nếu có phân trang
+        while (url) {
+          const res = await axiosInstance.get(url);
+          allResults.push(...res.data.results);
+          url = res.data.next;  // Nếu null thì thoát vòng lặp
+        }
+    
+        const formatted = allResults.map((item) => ({
+          time: new Date(item.timestamp).toLocaleTimeString("vi-VN", { hour: '2-digit', minute: '2-digit' }),
+          status: item.value > 0 ? "Bật" : "Tắt"
+        }));
+    
+        setLightHistory(formatted);
+
+        if (allResults.length > 0) {
+          setLightOn(allResults[0].value === 1);
+        }
+      } catch (err) {
+        console.error("Lỗi khi tải lịch sử đèn:", err);
+      }
+    };
+
+    fetchLightHistory();
+    fetchLightMode();
     fetchLightBound();
     fetchCurrentLight();
   }, [navigate]);
 
+  const toggleLight = async () => {
+    if (!isManualMode) {
+      setLightControlError("Chỉ có thể điều chỉnh đèn ở chế độ thủ công.");
+      return;
+    }
   
+    try {
+      const newValue = lightOn ? 0 : 1;
+      const res = await axiosInstance.post("/light/control/illuminator/signal/", {
+        value: newValue,
+      });
+  
+      setLightOn(res.data.value === 1);
+      setLightControlError(null);
+    } catch (err) {
+      if (err.response?.status === 400) {
+        setLightControlError(err.response.data.value?.[0] || "Lỗi giá trị gửi lên.");
+      } else if (err.response?.status === 405) {
+        setLightControlError(err.response.data.detail);
+      } else {
+        setLightControlError("Đã xảy ra lỗi khi điều chỉnh đèn.");
+      }
+    }
+  };
+  
+
+  const handleModeChange = async (manual) => {
+    try {
+      await axiosInstance.put("/light/control/mode/", { manual });
+      setIsManualMode(manual);
+    } catch (err) {
+      console.error("Lỗi khi cập nhật chế độ:", err);
+    }
+  };
 
   const handleEditClick = () => {
     setEditValues({
@@ -246,47 +313,66 @@ const DashboardLightPage = () => {
           </div>
 
           {/* Chế độ điều chỉnh */}
-          <h2 className="text-xl font-bold mt-6">Chế độ điều chỉnh</h2>
+          <h2 className="text-xl font-bold mt-6 mb-2">Chế độ điều chỉnh</h2>
           <div className="grid grid-cols-2 gap-x-2 w-[50%] font-bold">
             <div className="p-4 py-6 bg-white border shadow rounded-lg flex items-center">
-              <input type="radio" name="light-mode" className="mr-2" />
+              <input
+                type="radio"
+                name="light-mode"
+                className="mr-2"
+                checked={isManualMode === true}
+                onChange={() => handleModeChange(true)}
+              />
               <p>Thủ công</p>
             </div>
             <div className="p-4 py-6 bg-white border shadow rounded-lg flex items-center">
-              <input type="radio" name="light-mode" className="mr-2" />
+              <input
+                type="radio"
+                name="light-mode"
+                className="mr-2"
+                checked={isManualMode === false}
+                onChange={() => handleModeChange(false)}
+              />
               <p>Tự động</p>
             </div>
           </div>
 
           {/* Điều chỉnh đèn */}
-          <h2 className="text-xl font-bold mt-6">Điều chỉnh đèn</h2>
+          <h2 className="text-xl font-bold mt-6 mb-2">Điều chỉnh đèn</h2>
           <div className="w-[20%] bg-white border shadow rounded-lg flex items-center p-4 py-6">
             <label className="inline-flex items-center cursor-pointer">
-              <input type="checkbox" value="" className="sr-only peer" />
-              <div className="relative w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-gray-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-              <span className="ms-3 text-sm font-bold">Bật</span>
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={lightOn}
+                onChange={toggleLight}
+              />
+              <div className={`relative w-11 h-6 ${!isManualMode ? 'bg-gray-300' : 'bg-gray-400'} peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-gray-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${lightOn ? 'peer-checked:bg-green-500' : ''}`}></div>
+              <span className="ms-3 text-sm font-bold">{lightOn ? "Bật" : "Tắt"}</span>
             </label>
           </div>
 
+          {lightControlError && (
+            <div className="mt-2 text-red-600 text-sm w-[40%]">{lightControlError}</div>
+          )}
+
+
           {/* Lịch sử bật/tắt đèn */}
           <h2 className="text-xl font-bold mt-6 mb-2">Lịch sử bật, tắt đèn</h2>
-          <div className="w-[60%] border shadow rounded-lg bg-white">
-            {lightHistoryData.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center px-4 py-3 border-b last:border-none"
-              >
-                <span className="mr-2 pl-2">🕒</span>
-                <span className="text-gray-500 text-sm w-[20%]">{item.time}</span>
-                <span
-                  className={`ml-auto font-semibold ${
-                    item.status === "Bật" ? "text-green-600" : "text-red-600"
-                  }`}
-                >
-                  {item.status}
-                </span>
-              </div>
-            ))}
+          <div className="w-[48%] border rounded-lg shadow-md bg-white">
+            {lightHistory.length > 0 ? (
+              lightHistory.map((item, index) => (
+                <div key={index} className="flex items-center px-4 py-3 border-b last:border-none">
+                  <span className="mr-2 text-lg">💡</span>
+                  <div className="flex-grow">
+                    <p className="text-sm font-semibold">Thời gian: {item.time}</p>
+                    <p className="text-sm">Trạng thái: {item.status}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-4 text-sm text-gray-500">Đang tải lịch sử...</div>
+            )}
           </div>
         </div>
       </div>
@@ -296,3 +382,7 @@ const DashboardLightPage = () => {
 };
 
 export default DashboardLightPage;
+
+
+
+
