@@ -27,7 +27,7 @@ class SignalIlluminatorView(views.APIView):
                 feed = get_or_create_feed(f"{request.user.username}-illuminator", client) 
                 signal = serializer.validated_data['value']
                 data = client.send_data(feed.key, float(signal))
-                IlluminatorControl.objects.create(value=data.value, timestamp=data.created_at, user=request.user)
+                obj = IlluminatorControl.objects.create(value=data.value, timestamp=data.created_at, user=request.user)
             except Exception as e:
                 return Response(
                     {
@@ -36,5 +36,15 @@ class SignalIlluminatorView(views.APIView):
                     },
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
+            serializer = IlluminatorControlSerializer(obj)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RetrieveIlluminatorSignalView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = IlluminatorControlSerializer
+    pagination_class = PageNumberPagination
+    
+    def get_queryset(self):
+        return IlluminatorControl.objects.filter(user=self.request.user)

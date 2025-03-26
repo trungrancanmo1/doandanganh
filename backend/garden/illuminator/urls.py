@@ -18,8 +18,10 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import (
     SignalIlluminatorView,
+    RetrieveIlluminatorSignalView,
 )
 
 urlpatterns = [
     path('signal/', SignalIlluminatorView.as_view(), name='illuminator_signal'),
+    path('get/', RetrieveIlluminatorSignalView.as_view(), name='illuminator_history_retrieve'),
 ]

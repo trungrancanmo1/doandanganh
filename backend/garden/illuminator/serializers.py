@@ -5,7 +5,10 @@ from .models import IlluminatorControl
 class IlluminatorControlSerializer(serializers.ModelSerializer):
     class Meta:
         model = IlluminatorControl
-        fields = ['value']
+        fields = ['value', 'timestamp']
+        extra_kwargs = {
+            'timestamp': { 'required': False },
+        }
     
     def validate_value(self, value):
         if value not in [0, 1]:
