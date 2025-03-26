@@ -1,7 +1,7 @@
-from connectors import source_connector
-from utils.logger import logger
-from config.config import EMQX_URL, PORT
-from phases import phase1
+from local_data_process_service.connectors import source_connector
+from local_data_process_service.utils import logger
+from local_data_process_service.utils.config import EMQX_URL, PORT
+from local_data_process_service.core.phases import phase1
 # from phases import phase2
 
 

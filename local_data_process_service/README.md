@@ -2,9 +2,14 @@
 This service acts as a local data processing middleware between IoT data sources and sinks.
 
 1. **Install dependencies**  
-    Run the following command to install the required dependencies:
+    Run the following command to install the required dependencies using Poetry:
     ```bash
-    pip install -r requirements.txt
+    poetry install
+    ```
+
+    Alternatively, if you are in a development environment, use:
+    ```bash
+    poetry install --with dev
     ```
 
 2. **Configure environment variables**  
@@ -26,8 +31,14 @@ This service acts as a local data processing middleware between IoT data sources
 
 3. **Run the service**  
     Start the local data processing service to handle IoT data streams by running:
+
     ```bash
-    python app.py
+    docker start <your-redis-server> # to start the message queue used by celery
+
+    poetry run python -m local_data_process_service.app # to run the mqtt_client
+
+    poetry run celery -A local_data_process_service.capp worker --loglevel=info # to run the celery workers
+
     ```
 
     This service operates independently of any web application back-end and processes data between IoT sources and sinks.

@@ -1,11 +1,11 @@
 import paho.mqtt.client as mqtt
 from paho.mqtt.enums import CallbackAPIVersion
 from paho.mqtt.enums import MQTTProtocolVersion
-from utils.logger import logger
-from config.config import TOPIC, EMQX_USER_NAME, EMQX_PASSWORD, EMQX_URL, DATA_ENCODE_SCHEME
-from phases import phase1
-
 import json
+
+from local_data_process_service.utils import logger
+from local_data_process_service.utils.config import TOPIC, EMQX_USER_NAME, EMQX_PASSWORD, EMQX_URL, DATA_ENCODE_SCHEME
+from local_data_process_service.core.phases import phase1
 
 
 def on_connect(mqttc, obj, flags, rc, properties):

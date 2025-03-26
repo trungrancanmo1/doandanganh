@@ -1,9 +1,9 @@
 from celery.utils.log import get_task_logger
 from influxdb_client_3 import Point
 
-from capp import celery
-from config.config import DATA_ENCODE_SCHEME, MEASUREMENT, INFLUXDB_BUCKET
-from connectors.sink_connector import influxdb_client
+from local_data_process_service.capp import celery
+from local_data_process_service.utils.config import DATA_ENCODE_SCHEME, MEASUREMENT, INFLUXDB_BUCKET
+from local_data_process_service.connectors.sink_connector import influxdb_client
 
 
 logger = get_task_logger(__name__)

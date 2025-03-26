@@ -1,13 +1,12 @@
 from celery import Celery
 
-from config.config import MESSAGE_BROKER
-
+from local_data_process_service.utils.config import MESSAGE_BROKER
 
 
 celery = Celery(
     main='capp',
     broker=MESSAGE_BROKER,
-    include=['phases.phase1']
+    include=['local_data_process_service.core.phases.phase1']
 )
 
 
