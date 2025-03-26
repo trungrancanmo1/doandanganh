@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import LightBound, LightRecord
+from .models import LightBound, LightRecord, LightControlMode
 
 
 class LightBoundSerializer(serializers.ModelSerializer):
@@ -38,3 +38,9 @@ class LightRecordSerializer(serializers.ModelSerializer):
         if value < 0:
             raise serializers.ValidationError('Light unit cannot be negative')
         return value
+
+
+class LightControlModeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LightControlMode
+        fields = ['manual']

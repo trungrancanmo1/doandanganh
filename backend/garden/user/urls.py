@@ -22,6 +22,9 @@ from .views import (
     UserTokenObtainPairView,
     UserProfileView,
     UserAvatarUploadView,
+    UpdateUserProfileView,
+    RequestPasswordResetView,
+    ConfirmPasswordResetView,
 )
 
 urlpatterns = [
@@ -30,4 +33,7 @@ urlpatterns = [
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('profile/get/', UserProfileView.as_view(), name='user_profile_retrieve'),
     path('profile/avatar/upload/', UserAvatarUploadView.as_view(), name='user_avatar_upload'),
+    path('profile/update/', UpdateUserProfileView.as_view(), name='user_profile_update'),
+    path('password/reset/', RequestPasswordResetView.as_view(), name='password_reset_request'),
+    path('password/reset/confirm/', ConfirmPasswordResetView.as_view(), name='password_reset_confirm'),
 ]

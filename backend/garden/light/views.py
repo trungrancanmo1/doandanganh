@@ -4,8 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import exceptions
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from .serializers import LightBoundSerializer, LightRecordSerializer
-from .models import LightBound, LightRecord
+from .serializers import LightBoundSerializer, LightRecordSerializer, LightControlModeSerializer
+from .models import LightBound, LightRecord, LightControlMode
 from django.conf import settings
 
 from aio_helper.client import get_aio_client
@@ -134,3 +134,12 @@ class DeleteOldestLightRecord(views.APIView):
             {'message': f"Deleted {count} oldest records"},
             status=status.HTTP_200_OK,
         )
+
+
+class ManageLightControlModeView(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = LightControlModeSerializer
+    
+    def get_object(self):
+        obj, _ = LightControlMode.objects.get_or_create(user=self.request.user)
+        return obj
