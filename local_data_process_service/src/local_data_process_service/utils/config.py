@@ -28,6 +28,7 @@ DATA_ENCODE_SCHEME = 'utf-8'
 
 # =================================================
 # DATA PROCESSING CONFIGURATION
+# LEARN NETWORK IN DOCKER TO RUN THAT
 # =================================================
 MESSAGE_BROKER  = 'redis://localhost:6379/0'
 BACK_END        = 'redis://localhost:6379/0'
