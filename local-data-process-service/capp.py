@@ -7,7 +7,7 @@ from config.config import MESSAGE_BROKER
 celery = Celery(
     main='capp',
     broker=MESSAGE_BROKER,
-    include=['phases.phase1', 'phases.phase2']
+    include=['phases.phase1']
 )
 
 
