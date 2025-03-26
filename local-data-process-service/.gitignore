@@ -54,3 +54,5 @@ gunicorn.error.log
 # Celery & background tasks
 celerybeat-schedule
 celerybeat.pid
+
+**/service_account_key.json

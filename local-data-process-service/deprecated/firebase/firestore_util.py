@@ -11,7 +11,7 @@ load_dotenv(dotenv_path='./.env')
 
 
 def connect_firestore():
-    credential = credentials.Certificate(Path(os.getenv("CREDENTIALS_LOCATION", "DEFAULT")))
+    credential = credentials.Certificate(Path(os.getenv("SERVICE_ACCOUNT_KEY", "DEFAULT")))
     return firestore.client(app=firebase_admin.initialize_app(credential, name='firestore'))
 
 
