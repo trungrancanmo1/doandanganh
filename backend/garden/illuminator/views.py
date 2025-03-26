@@ -40,37 +40,28 @@ class SignalIlluminatorView(views.APIView):
 
             topic = '/'.join([request.user.username, 'illuminator'])
 
+            timestamp = timezone.now().isoformat()
+
             payload = {
-                'value' : value
+                'value' : value,
+                'type' : 'illuminator',
+                'timestamp': timestamp,
             }
 
             
-
             decode = json.dumps(payload).encode('utf-8')
 
-            mqtt_client.publish(topic=topic, payload=decode, qos=2)
+            try:
+                mqtt_client.publish(topic=topic, payload=decode, qos=2)
+            except Exception as e:
+                return Response({
+                    'error': 'Failed to publish topic',
+                    'detail': str(e),
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        # if serializer.is_valid():
-        #     aio_username = settings.AIO_USERNAME
-        #     aio_key = settings.AIO_KEY
-        #     try:
-        #         client = get_aio_client(aio_username, aio_key)
-        #         feed = get_or_create_feed(f"{request.user.username}-illuminator", client) 
-        #         signal = serializer.validated_data['value']
-        #         data = client.send_data(feed.key, float(signal))
-        #         obj = IlluminatorControl.objects.create(value=data.value, timestamp=data.created_at, user=request.user)
-        #     except Exception as e:
-        #         return Response(
-        #             {
-        #                 'error': 'Failed to send data to Adafruit IO',
-        #                 'detail': str(e),
-        #             },
-        #             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        #         )
-        #     serializer = IlluminatorControlSerializer(obj)
-        #     return Response(serializer.data, status=status.HTTP_200_OK)
+            obj = IlluminatorControl.objects.create(value=value, timestamp=timestamp)
+            serializer = IlluminatorControlSerializer(obj)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
