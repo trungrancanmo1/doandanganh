@@ -34,4 +34,5 @@ urlpatterns = [
     path('record/get/', RetrieveLightRecordListView.as_view(), name='light_records_retrieve'),
     path('record/delete/', DeleteOldestLightRecord.as_view(), name='oldest_light_delete'),
     path('control/mode/', ManageLightControlModeView.as_view(), name='control_mode_manage'),
+    path('control/illuminator/', include('illuminator.urls')),
 ]

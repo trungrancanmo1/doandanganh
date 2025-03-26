@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     'light',
     'pest',
     'user',
+    
+    'illuminator',
 ]
 
 MIDDLEWARE = [
