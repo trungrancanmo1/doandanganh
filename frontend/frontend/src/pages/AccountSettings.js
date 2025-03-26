@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {jwtDecode} from "jwt-decode";
-import axios from "axios";
+import axiosInstance from "../components/axiosInstance";
 
 const AccountSettings = () => {
   const [profileImage, setProfileImage] = useState("/default-avatar.png");
-  const [imageFile, setImageFile] = useState(null); // Store the selected file
+  const [imageFile, setImageFile] = useState(null);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -12,35 +11,28 @@ const AccountSettings = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (token) {
+    const fetchUserProfile = async () => {
       try {
-        const decoded = jwtDecode(token);
-        const name = `${decoded.last_name} ${decoded.first_name}`;
-        setFullName(name);
-        setEmail(decoded.email || "");
-        axios.get("http://127.0.0.1:8000/api/user/me/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then((response) => {
-          setProfileImage(response.data.avatar);
-        })
-        .catch((error) => {
-          console.error("Lỗi khi lấy avatar:", error);
-        });
-      } catch (err) {
-        console.error("Không thể giải mã token:", err);
+        const response = await axiosInstance.get("http://127.0.0.1:8000/api/user/profile/get/");
+        const data = response.data;
+        const fullName = `${data.last_name} ${data.first_name}`;
+
+        setFullName(fullName);
+        setEmail(data.email || "");
+        setProfileImage(data.avatar || "");
+      } catch (error) {
+        console.error("Lỗi khi lấy thông tin người dùng:", error);
       }
-    }
+    };
+
+    fetchUserProfile();
   }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setProfileImage(URL.createObjectURL(file));
-      setImageFile(file); // Save the file for uploading
+      setImageFile(file);
     }
   };
 
@@ -54,11 +46,9 @@ const AccountSettings = () => {
     formData.append("avatar", imageFile);
 
     try {
-      const token = localStorage.getItem("access_token");
-      const response = await axios.patch("http://127.0.0.1:8000/api/user/update-avatar/", formData, {
+      const response = await axiosInstance.put("http://127.0.0.1:8000/api/user/profile/avatar/upload/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -73,7 +63,7 @@ const AccountSettings = () => {
 
   const handleSaveChanges = () => {
     alert("Thông tin cá nhân đã được cập nhật!");
-    handleSaveAvatar(); // Save avatar when saving other info
+    handleSaveAvatar(); // Gửi ảnh nếu có
   };
 
   const handleChangePassword = () => {
@@ -82,6 +72,7 @@ const AccountSettings = () => {
       return;
     }
     alert("Mật khẩu đã được thay đổi thành công!");
+    // Có thể gọi API đổi mật khẩu ở đây nếu muốn
   };
 
   return (
@@ -96,22 +87,57 @@ const AccountSettings = () => {
           <input type="file" accept="image/*" onChange={handleImageChange} />
         </div>
         <label className="block mb-1">Họ và tên</label>
-        <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full p-2 border rounded mb-3" />
+        <input
+          type="text"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          className="w-full p-2 border rounded mb-3"
+        />
         <label className="block mb-1">Email</label>
-        <input type="email" value={email} disabled className="w-full p-2 border bg-gray-100 rounded mb-3" />
-        <button onClick={handleSaveChanges} className="px-4 py-2 bg-green-500 text-white rounded-lg">Lưu thay đổi</button>
+        <input
+          type="email"
+          value={email}
+          disabled
+          className="w-full p-2 border bg-gray-100 rounded mb-3"
+        />
+        <button
+          onClick={handleSaveChanges}
+          className="px-4 py-2 bg-green-500 text-white rounded-lg"
+        >
+          Lưu thay đổi
+        </button>
       </div>
 
       {/* Thay Đổi Mật Khẩu */}
       <div>
         <h3 className="text-lg font-semibold mb-2">Thay Đổi Mật Khẩu</h3>
         <label className="block mb-1">Mật khẩu hiện tại</label>
-        <input type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} className="w-full p-2 border rounded mb-3" />
+        <input
+          type="password"
+          value={currentPassword}
+          onChange={(e) => setCurrentPassword(e.target.value)}
+          className="w-full p-2 border rounded mb-3"
+        />
         <label className="block mb-1">Mật khẩu mới</label>
-        <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full p-2 border rounded mb-3" />
+        <input
+          type="password"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          className="w-full p-2 border rounded mb-3"
+        />
         <label className="block mb-1">Xác nhận mật khẩu mới</label>
-        <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full p-2 border rounded mb-3" />
-        <button onClick={handleChangePassword} className="px-4 py-2 bg-blue-500 text-white rounded-lg">Đổi mật khẩu</button>
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="w-full p-2 border rounded mb-3"
+        />
+        <button
+          onClick={handleChangePassword}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+        >
+          Đổi mật khẩu
+        </button>
       </div>
     </div>
   );

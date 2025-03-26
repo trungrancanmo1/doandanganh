@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Sidebar from "../../components/Sidebar";
+import axiosInstance from "../../components/axiosInstance";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 // Dữ liệu mẫu cho lịch sử máy bơm
 const pumpHistoryData = [
@@ -15,6 +18,98 @@ const pumpHistoryData = [
 ];
 
 const DashboardHumidityPage = () => {
+
+  const [moistureBound, setMoistureBound] = useState({ lowest: null, highest: null });
+  const [editing, setEditing] = useState(false);
+  const [editValues, setEditValues] = useState({ lowest: "", highest: "" });
+  const [currentMoisture, setCurrentMoisture] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+  
+    let decoded;
+    try {
+      decoded = jwtDecode(token);
+      const now = Date.now() / 1000;
+      if (decoded.exp < now) {
+        navigate("/login");
+        return;
+      }
+    } catch (err) {
+      console.error("Token không hợp lệ:", err);
+      navigate("/login");
+      return;
+    }
+  
+    const fetchMoistureBound = async () => {
+      try {
+        const res = await axiosInstance.get("/moisture/bound/get/");
+        setMoistureBound({
+          lowest: res.data.lowest_allowed,
+          highest: res.data.highest_allowed,
+        });
+      } catch (err) {
+        console.error("Lỗi khi tải ngưỡng độ ẩm:", err);
+      }
+    };
+  
+    const fetchCurrentMoisture = async () => {
+      try {
+        await axiosInstance.post("/moisture/record/sync/");
+        const res = await axiosInstance.get("/moisture/record/get/recent/?n=1");
+        if (res.data && res.data.length > 0) {
+          setCurrentMoisture(res.data[0].value);
+        }
+      } catch (err) {
+        console.error("Lỗi khi lấy độ ẩm hiện tại:", err);
+      }
+    };
+  
+    fetchMoistureBound();
+    fetchCurrentMoisture();
+  }, [navigate]);
+  
+
+  const handleEditClick = () => {
+    setEditValues({
+      lowest: moistureBound.lowest,
+      highest: moistureBound.highest,
+    });
+    setEditing(true);
+  };
+  
+  const handleSave = async () => {
+    const lowest = parseFloat(editValues.lowest);
+    const highest = parseFloat(editValues.highest);
+  
+    try {
+      const res = await axiosInstance.patch("/moisture/bound/update/", {
+        lowest_allowed: lowest,
+        highest_allowed: highest,
+      });
+  
+      setMoistureBound({
+        lowest: res.data.lowest_allowed,
+        highest: res.data.highest_allowed,
+      });
+  
+      setEditing(false);
+    } catch (err) {
+      console.error("Lỗi khi cập nhật:", err);
+    }
+  };
+  
+
+  const handleChange = (e) => {
+    setEditValues({ ...editValues, [e.target.name]: e.target.value });
+  };
+
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -28,33 +123,90 @@ const DashboardHumidityPage = () => {
                 <span className="text-2xl mr-2">💧</span>
                 <div>
                   <p className="text-gray-700">Độ ẩm</p>
-                  <p className="font-bold">60%</p>
+                  <p className="font-bold">
+                    {currentMoisture !== null ? `${currentMoisture}%` : "Đang tải..."}
+                  </p>
                 </div>
               </div>
             </div>
             <div className="w-[40%] pr-6">
-              <h2 className="text-xl font-bold mb-4">Mức độ ẩm cần thiết</h2>
-              <div className="grid grid-rows-2 gap-y-2 p-4 bg-white border shadow rounded-lg items-center font-bold">
-                <div className="flex justify-between">
-                  <div className="w-[18%]">
-                    <p>Từ</p>
-                  </div>
-                  <div className="flex-grow mx-1 bg-gray-300 rounded-sm px-8">
-                    <p className="text-center">50%</p>
+              <h2 className="text-xl font-bold mb-4">Ngưỡng độ ẩm cần thiết</h2>
+              <div
+                className={`grid grid-rows-2 gap-y-2 p-4 border shadow rounded-lg items-center font-bold ${
+                  editing ? "bg-yellow-50 border-yellow-500" : "bg-white"
+                }`}
+              >
+                {/* HÀNG TỪ */}
+                <div className="flex justify-between items-center">
+                  <div className="w-[18%]">Từ</div>
+                  <div className="flex-grow mx-1">
+                    {editing ? (
+                      <div className="border border-yellow-500 rounded px-2 py-1 bg-white">
+                        <input
+                          type="number"
+                          name="lowest"
+                          value={editValues.lowest}
+                          onChange={handleChange}
+                          className="w-full outline-none"
+                        />
+                      </div>
+                    ) : (
+                      <div className="bg-gray-300 rounded-sm text-center py-1">
+                        {moistureBound.lowest !== null
+                          ? `${moistureBound.lowest} %`
+                          : "Đang tải..."}
+                      </div>
+                    )}
                   </div>
                   <div className="w-[26%]"></div>
                 </div>
-                <div className="flex justify-between">
-                  <div className="w-[18%]">
-                    <p>Đến</p>
+
+                {/* HÀNG ĐẾN */}
+                <div className="flex justify-between items-center">
+                  <div className="w-[18%]">Đến</div>
+                  <div className="flex-grow mx-1">
+                    {editing ? (
+                      <div className="border border-yellow-500 rounded px-2 py-1 bg-white">
+                        <input
+                          type="number"
+                          name="highest"
+                          value={editValues.highest}
+                          onChange={handleChange}
+                          className="w-full outline-none"
+                        />
+                      </div>
+                    ) : (
+                      <div className="bg-gray-300 rounded-sm text-center py-1">
+                        {moistureBound.highest !== null
+                          ? `${moistureBound.highest} %`
+                          : "Đang tải..."}
+                      </div>
+                    )}
                   </div>
-                  <div className="flex-grow mx-1 bg-gray-300 rounded-sm px-8">
-                    <p className="text-center">70%</p>
-                  </div>
-                  <div className="w-[26%] flex justify-end">
-                    <button className="bg-[#598868] text-white text-xs hover:bg-green-600 rounded-md px-2">
-                      Chỉnh sửa
-                    </button>
+                  <div className="w-[26%] flex justify-end space-x-2">
+                    {editing ? (
+                      <>
+                        <button
+                          className="bg-green-600 text-white text-xs rounded-md px-2 hover:bg-green-700"
+                          onClick={handleSave}
+                        >
+                          Lưu
+                        </button>
+                        <button
+                          className="bg-gray-400 text-white text-xs rounded-md px-2 hover:bg-gray-500"
+                          onClick={() => setEditing(false)}
+                        >
+                          Hủy
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        className="bg-[#598868] text-white text-xs hover:bg-green-600 rounded-md px-2"
+                        onClick={handleEditClick}
+                      >
+                        Chỉnh sửa
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

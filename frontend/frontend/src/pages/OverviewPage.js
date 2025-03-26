@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Sidebar from "../components/Sidebar";
-import axios from "axios";
+import axiosInstance from "../components/axiosInstance";
 import PlantPicture from "../assets/plantPicture.jpg";
 import { jwtDecode } from "jwt-decode";
 
@@ -27,9 +27,10 @@ const ChartComponent = ({ title, data, color }) => (
 
 const DashboardOverview = () => {
   const navigate = useNavigate();
-  const [humidityIndex, setHumidityIndex] = useState();
-  const [tempIndex, setTempIndex] = useState();
-  const [lightIndex, setLightIndex] = useState();
+  const [humidityIndex, setHumidityIndex] = useState([]);
+  const [tempIndex, setTempIndex] = useState([]);
+  const [lightIndex, setLightIndex] = useState([]);
+
   const [humidityData, setHumidityData] = useState([]);
   const [tempData, setTempData] = useState([]);
   const [lightData, setLightData] = useState([]);
@@ -37,68 +38,77 @@ const DashboardOverview = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
+  
     if (!token) {
       navigate("/login");
       return;
     }
   
+    let decoded;
     try {
-      const decoded = jwtDecode(token);
+      decoded = jwtDecode(token);
       const now = Date.now() / 1000;
       if (decoded.exp < now) {
-        // Token đã hết hạn
         navigate("/login");
+        return;
       }
     } catch (err) {
-      // Token không hợp lệ
+      console.error("Token không hợp lệ:", err);
       navigate("/login");
+      return;
     }
   
-    const headers = {
-      Authorization: `Bearer ${token}`,
-    };
-    
     const fetchData = async () => {
       try {
-
+        // 1. Đồng bộ dữ liệu sensor
+        const syncUrls = [
+          "moisture",
+          "temperature",
+          "light"
+        ].map((type) => `http://127.0.0.1:8000/api/${type}/record/sync/`);
+  
+        await Promise.all(syncUrls.map(url => axiosInstance.post(url)));
+  
+        // 2. Lấy chỉ số mới nhất
         const [humidity, temp, light] = await Promise.all([
-          axios.get("http://127.0.0.1:8000/api/moisture/bound/get/", { headers }), // Độ ẩm
-          axios.get("http://127.0.0.1:8000/api/temperature/bound/get/", { headers }), // Nhiệt độ
-          axios.get("http://127.0.0.1:8000/api/light/bound/get/", { headers }), // Ánh sáng
+          axiosInstance.get("http://127.0.0.1:8000/api/moisture/record/get/recent/?n=1"),
+          axiosInstance.get("http://127.0.0.1:8000/api/temperature/record/get/recent/?n=1"),
+          axiosInstance.get("http://127.0.0.1:8000/api/light/record/get/recent/?n=1"),
         ]);
-
-        setHumidityIndex(humidity)
-        setTempIndex(temp)
-        setLightIndex(light)
-
-        await Promise.all([
-          axios.get("http://127.0.0.1:8000/api/moisture/record/sync/", { headers }),
-          axios.get("http://127.0.0.1:8000/api/temperature/record/sync/", { headers }),
-          axios.get("http://127.0.0.1:8000/api/light/record/sync/", { headers }),
-        ]);
-
+  
+        // 3. Lấy lịch sử biểu đồ (10 điểm gần nhất)
         const [humidityRes, tempRes, lightRes] = await Promise.all([
-          axios.get("http://127.0.0.1:8000/api/humidity/record/get/?n=10", { headers }),
-          axios.get("http://127.0.0.1:8000/api/temperature/record/get/?n=10", { headers }),
-          axios.get("http://127.0.0.1:8000/api/light/record/get/?n=10", { headers }),
+          axiosInstance.get("http://127.0.0.1:8000/api/moisture/record/get/recent/?n=10"),
+          axiosInstance.get("http://127.0.0.1:8000/api/temperature/record/get/recent/?n=10"),
+          axiosInstance.get("http://127.0.0.1:8000/api/light/record/get/recent/?n=10"),
         ]);
   
         const formatData = (data) =>
           data.map((item) => ({
-            time: new Date(item.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            time: new Date(item.timestamp).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
             value: item.value,
           }));
+  
+        setHumidityIndex(formatData(humidity.data));
+        setTempIndex(formatData(temp.data));
+        setLightIndex(formatData(light.data));
   
         setHumidityData(formatData(humidityRes.data));
         setTempData(formatData(tempRes.data));
         setLightData(formatData(lightRes.data));
-      } catch (err) {
-        console.error("Lỗi khi lấy dữ liệu biểu đồ:", err);
+  
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu biểu đồ:", error);
       }
     };
   
     fetchData();
   }, [navigate]);
+  
+  
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -112,21 +122,27 @@ const DashboardOverview = () => {
               <span className="text-2xl mr-2">🌡️</span>
               <div>
                 <p className="text-gray-700">Nhiệt độ</p>
-                <p className="font-bold">{`${tempIndex}°C`}</p>
+                <p className="font-bold">
+                  {tempIndex.length > 0 ? `${tempIndex[0].value}°C` : "Đang tải..."}
+                </p>
               </div>
             </div>
             <div className="p-4 bg-white shadow rounded-lg flex items-center">
               <span className="text-2xl mr-2">☀️</span>
               <div>
                 <p className="text-gray-700">Ánh sáng</p>
-                <p className="font-bold">{`${lightIndex}%`}</p>
+                <p className="font-bold">
+                  {lightIndex.length > 0 ? `${lightIndex[0].value}%` : "Đang tải..."}
+                </p>
               </div>
             </div>
             <div className="p-4 bg-white shadow rounded-lg flex items-center">
               <span className="text-2xl mr-2">💧</span>
               <div>
                 <p className="text-gray-700">Độ ẩm</p>
-                <p className="font-bold">{`${humidityIndex}%`}</p>
+                <p className="font-bold">
+                  {humidityIndex.length > 0 ? `${humidityIndex[0].value}%` : "Đang tải..."}
+                </p>
               </div>
             </div>
           </div>
