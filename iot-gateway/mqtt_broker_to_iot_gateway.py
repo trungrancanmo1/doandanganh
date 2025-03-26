@@ -1,18 +1,20 @@
+from config import *
+
+
 import paho.mqtt.client as mqtt
 from paho.mqtt.enums import CallbackAPIVersion
 from paho.mqtt.enums import MQTTProtocolVersion
 import json
 
 
-
-TOPIC = '#'
-EMQX_USER_NAME='test-flow'
-EMQX_PASSWORD='Trungdung1711'
-EMQX_URL='z7f54af0.ala.dedicated.aws.emqxcloud.com'
+# =================================================
+# SUBSCRIBING FOR ONLY USER'S DEVICES
+# =================================================
+COMMAND_TOPIC = make_topic('+', 'command', '+')
 
 
 def on_connect(mqttc, obj, flags, rc, properties):
-    mqttc.subscribe(topic=TOPIC)
+    mqttc.subscribe(topic=COMMAND_TOPIC)
 
 
 # =================================================
