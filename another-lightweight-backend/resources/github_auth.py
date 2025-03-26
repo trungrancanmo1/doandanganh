@@ -11,6 +11,7 @@ from app.services import db
 from models.User import User
 
 
+# TODO handle IDOR
 class GithubLogin(Resource):
     def post(self):
         schema = GithubLoginSchema()
@@ -38,7 +39,7 @@ class GithubLogin(Resource):
         token = jwt.encode(
             payload=decoded_token,
             key=current_app.config['JWT_SECRET_KEY'],
-            algorithm='HS256'
+            algorithm='HS256',
         )
 
         return {

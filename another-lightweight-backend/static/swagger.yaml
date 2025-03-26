@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  title: "Smart Farm API"
+  title: "HCMUT Smart Farm API"
   description: "A simple Flask-RESTful API with Swagger UI"
   version: "1.0.0"
 components:
@@ -132,7 +132,7 @@ paths:
                             example: "normal"
                           image_processed:
                             type: "boolean"
-                            example: true
+                            example: "on"
                           insect_attack_detected:
                             type: "boolean"
                             example: false
@@ -340,5 +340,646 @@ paths:
                           example: 25.3
         "400":
           description: "Invalid input data"
+      security:
+        - bearerAuth: []
+  ##########################################################
+  ##########################################################
+  ##########################################################
+  ##########################################################
+  ##########################################################
+  /api/v1/users/{user_id}/environments:
+    get:
+      summary: "Get all environments of a user"
+      description: "Endpoint to retrieve all environments associated with a specific user."
+      tags:
+        - "Environment"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "User ID whose environments are being retrieved"
+          required: true
+          schema:
+            type: "string"
+            example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+      responses:
+        "200":
+          description: "Successfully retrieved the list of environments"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    env_id:
+                      type: "string"
+                      description: "ID of the environment"
+                      example: "SHN4cOPG4zsFbftsZ955"
+                    location:
+                      type: "string"
+                      description: "Location of the environment"
+                      example: "HCMUT.H6.812"
+                    type:
+                      type: "string"
+                      description: "Type of the environment"
+                      example: "greenhouse"
+        "401":
+          description: "Unauthorized access"
+        "403":
+          description: "Forbidden access"
+      security:
+        - bearerAuth: []
+
+
+    post:
+      summary: "Create a new environment for a user"
+      description: "Endpoint to create a new environment associated with a specific user."
+      tags:
+        - "Environment"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "User ID for whom the environment is being created"
+          required: true
+          schema:
+            type: "string"
+            example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                env_id:
+                  type: "string"
+                  description: "Name of the environment"
+                  example: "my_simple_garden"
+                location:
+                  type: "string"
+                  description: "Location of the environment"
+                  example: "HCMUT.H6.812"
+                type:
+                  type: "string"
+                  description: "Type of the environment"
+                  example: "greenhouse"
+                desc:
+                  type: "string"
+                  description: "Description of the environment"
+                  example: "My green environment"
+      responses:
+        "201":
+          description: "Environment successfully created"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  env_id:
+                    type: "string"
+                    description: "Name of the created environment"
+                    example: "my_simple_garden"
+                  location:
+                    type: "string"
+                    description: "Location of the created environment"
+                    example: "HCMUT.H6.812"
+                  type:
+                    type: "string"
+                    description: "Type of the created environment"
+                    example: "greenhouse"
+        "400":
+          description: "Invalid input data"
+        "401":
+          description: "Unauthorized access"
+        "403":
+          description: "Forbidden access"
+      security:
+        - bearerAuth: []
+
+
+  /api/v1/users/{user_id}/environments/{env_id}:
+    get:
+      summary: "Get a specific environment of a user"
+      description: "Endpoint to retrieve a specific environment associated with a user."
+      tags:
+        - "Environment"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "User ID whose environment is being retrieved"
+          required: true
+          schema:
+            type: "string"
+            example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+        - name: "env_id"
+          in: "path"
+          description: "Environment ID to retrieve"
+          required: true
+          schema:
+            type: "string"
+            example: "my_simple_garden"
+      responses:
+        "200":
+          description: "Successfully retrieved the environment"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  env_id:
+                    type: "string"
+                    description: "ID of the environment"
+                    example: "my_simple_garden"
+                  location:
+                    type: "string"
+                    description: "Location of the environment"
+                    example: "HCMUT.H6.812"
+                  type:
+                    type: "string"
+                    description: "Type of the environment"
+                    example: "greenhouse"
+        "401":
+          description: "Unauthorized access"
+        "403":
+          description: "Forbidden access"
+        "404":
+          description: "Environment not found"
+      security:
+        - bearerAuth: []
+
+
+    delete:
+      summary: "Delete a specific environment of a user"
+      description: "Endpoint to delete a specific environment associated with a user."
+      tags:
+        - "Environment"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "User ID whose environment is being deleted"
+          required: true
+          schema:
+            type: "string"
+            example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+        - name: "env_id"
+          in: "path"
+          description: "Environment ID to delete"
+          required: true
+          schema:
+            type: "string"
+            example: "my_simple_garden"
+      responses:
+        "204":
+          description: "Environment successfully deleted"
+        "401":
+          description: "Unauthorized access"
+        "403":
+          description: "Forbidden access"
+        "404":
+          description: "Environment not found"
+      security:
+        - bearerAuth: []
+  ##########################################################
+  ##########################################################
+  ##########################################################
+  ##########################################################
+  ##########################################################
+  /api/v1/users/{user_id}/environments/{env_id}/sensors:
+    post:
+      summary: "Add a new sensor to an environment"
+      description: "Endpoint to add a new sensor to a specific environment associated with a user."
+      tags:
+        - "Sensor"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "User ID to whom the environment belongs"
+          required: true
+          schema:
+            type: "string"
+            example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+        - name: "env_id"
+          in: "path"
+          description: "Environment ID to which the sensor is being added"
+          required: true
+          schema:
+            type: "string"
+            example: "my_simple_garden"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                type:
+                  type: "string"
+                  description: "Type of the sensor"
+                  example: "temperature"
+                status:
+                  type: "boolean"
+                  description: "Status of the sensor (on/off)"
+                  example: "on"
+                unit:
+                  type: "string"
+                  description: "Unit of measurement for the sensor"
+                  example: "C"
+                sensor_id:
+                  type: "string"
+                  description: "Unique identifier for the sensor"
+                  example: "sensor101"
+      responses:
+        "201":
+          description: "Sensor successfully added"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  user_id:
+                    type: "string"
+                    description: "User ID"
+                    example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+                  env_id:
+                    type: "string"
+                    description: "Environment ID"
+                    example: "SHN4cOPG4zsFbftsZ955"
+                  sensor_id:
+                    type: "string"
+                    description: "Sensor ID"
+                    example: "sensor101"
+                  type:
+                    type: "string"
+                    description: "Type of the sensor"
+                    example: "temperature"
+                  status:
+                    type: "boolean"
+                    description: "Status of the sensor"
+                    example: "on"
+                  unit:
+                    type: "string"
+                    description: "Unit of measurement"
+                    example: "C"
+                  feed_id:
+                    type: "string"
+                    description: "Feed ID for the sensor"
+                    example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2/SHN4cOPG4zsFbftsZ955/sensor101"
+        "400":
+          description: "Invalid input data"
+        "401":
+          description: "Unauthorized access"
+        "403":
+          description: "Forbidden access"
+        "409":
+          description: "Sensor already exists"
+      security:
+        - bearerAuth: []
+
+
+    get:
+      summary: "Retrieve all sensors in a specific environment"
+      description: "Endpoint to retrieve all sensors associated with a specific environment of a user."
+      tags:
+        - "Sensor"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          description: "User ID to whom the environment belongs"
+          required: true
+          schema:
+            type: "string"
+            example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+        - name: "env_id"
+          in: "path"
+          description: "Environment ID whose sensors are being retrieved"
+          required: true
+          schema:
+            type: "string"
+            example: "my_simple_garden"
+      responses:
+        "200":
+          description: "Successfully retrieved the list of sensors"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  env_id:
+                    type: "string"
+                    description: "Environment ID"
+                    example: "my_simple_garden"
+                  sensors:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        id:
+                          type: "string"
+                          description: "Sensor ID"
+                          example: "sensor101"
+                        type:
+                          type: "string"
+                          description: "Type of the sensor"
+                          example: "temperature"
+                        status:
+                          type: "boolean"
+                          description: "Status of the sensor (on/off)"
+                          example: "on"
+                        unit:
+                          type: "string"
+                          description: "Unit of measurement for the sensor"
+                          example: "C"
+                        name:
+                          type: "string"
+                          description: "Name of the sensor"
+                          example: "Temperature Sensor"
+        "401":
+          description: "Unauthorized access"
+        "403":
+          description: "Forbidden access"
+        "404":
+          description: "Environment or sensors not found"
+      security:
+        - bearerAuth: []
+  
+
+  /api/v1/users/{user_id}/environments/{env_id}/sensors/{sensor_id}:
+    delete:
+      summary: Delete a sensor resource.
+      tags:
+        - Sensor
+      description: >
+        Deletes a sensor resource identified by `sensor_id` from the database. 
+        Also removes the sensor reference from the associated environment document.
+        Requires the user to be authenticated and have the appropriate role (`admin` or `user`).
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID of the user who owns the environment.
+          schema:
+            type: string
+            example: VVRsnPoAEqSbUa9QLwXLgj2D9Zx2
+        - name: env_id
+          in: path
+          required: true
+          description: The ID of the environment containing the sensor.
+          schema:
+            type: string
+            example: my_simple_garden
+        - name: sensor_id
+          in: path
+          required: true
+          description: The ID of the sensor to be deleted.
+          schema:
+            type: string
+            example: sensor_101
+      responses:
+        '204':
+          description: Sensor successfully deleted.
+        '404':
+          description: Sensor with the specified ID was not found.
+        '401':
+          description: Authentication is required to access this resource.
+        '403':
+          description: User does not have the required role to perform this action.
+      security:
+        - bearerAuth: []
+  ##########################################################
+  ##########################################################
+  ##########################################################
+  ##########################################################
+  ##########################################################
+  /api/v1/users/{user_id}/environments/{env_id}/actuators:
+    post:
+      summary: "Add a new actuator to an environment"
+      description: "Endpoint to add a new actuator to a specific environment associated with a user."
+      tags:
+      - "Actuator"
+      parameters:
+      - name: "user_id"
+        in: "path"
+        description: "User ID to whom the environment belongs"
+        required: true
+        schema:
+          type: "string"
+        example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+      - name: "env_id"
+        in: "path"
+        description: "Environment ID to which the actuator is being added"
+        required: true
+        schema:
+          type: "string"
+        example: "my_simple_garden"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                type:
+                  type: "string"
+                  description: "Type of the actuator"
+                  example: "pump"
+                status:
+                  type: "boolean"
+                  description: "Status of the actuator (on/off)"
+                  example: "on"
+                actuator_id:
+                  type: "string"
+                  description: "Unique identifier for the actuator"
+                  example: "actuator_101"
+      responses:
+        "201":
+          description: "Actuator successfully added"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  user_id:
+                    type: "string"
+                    description: "The user ID"
+                    example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+                  env_id:
+                    type: "string"
+                    description: "Environment ID"
+                    example: "my_simple_garden"
+                  actuator_id:
+                    type: "string"
+                    description: "Actuator ID"
+                    example: "actuator_101"
+                  type:
+                    type: "string"
+                    description: "Type of the actuator"
+                    example: "pump"
+                  status:
+                    type: "boolean"
+                    description: "Status of the actuator"
+                    example: "on"
+                  command_feed_id:
+                    type: "string"
+                    description: "Feed ID for actuator commands"
+                    example: "hcmut_smart_farm/users/VVRsnPoAEqSbUa9QLwXLgj2D9Zx2/envs/my_simple_garden/pump/actuators/actuator_101/command"
+                  status_feed_id:
+                    type: "string"
+                    description: "Feed ID for actuator status"
+                    example: "hcmut_smart_farm/users/VVRsnPoAEqSbUa9QLwXLgj2D9Zx2/envs/my_simple_garden/pump/actuators/actuator_101/status"
+                  last_command:
+                    type: "string"
+                    description: "Last command sent to the actuator"
+                    example: ""
+                  auto_mode:
+                    type: "boolean"
+                    description: "Indicates if the actuator is in auto mode"
+                    example: false
+                  min:
+                    type: "number"
+                    description: "Minimum threshold for the actuator"
+                    example: 0
+                  max:
+                    type: "number"
+                    description: "Maximum threshold for the actuator"
+                    example: 0
+        "400":
+          description: "Invalid input data"
+        "401":
+          description: "Unauthorized access"
+        "403":
+          description: "Forbidden access"
+        "409":
+          description: "Actuator already exists"
+      security:
+      - bearerAuth: []
+
+
+    get:
+      summary: "Retrieve all actuators in a specific environment"
+      description: "Endpoint to retrieve all actuators associated with a specific environment of a user."
+      tags:
+      - "Actuator"
+      parameters:
+      - name: "user_id"
+        in: "path"
+        description: "User ID to whom the environment belongs"
+        required: true
+        schema:
+          type: "string"
+        example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+      - name: "env_id"
+        in: "path"
+        description: "Environment ID whose actuators are being retrieved"
+        required: true
+        schema:
+          type: "string"
+        example: "my_simple_garden"
+      responses:
+        "200":
+          description: "Successfully retrieved the list of actuators"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  user_id:
+                    type: "string" 
+                    description: "The user ID"
+                    example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+                  env_id:
+                    type: "string"
+                    description: "Environment ID"
+                    example: "my_simple_garden"
+                  actuators:
+                    type: "array"
+                    items:
+                      type: "object"
+                      properties:
+                        id:
+                          type: "string"
+                          description: "Actuator ID"
+                          example: "actuator_101"
+                        type:
+                          type: "string"
+                          description: "Type of the actuator"
+                          example: "pump"
+                        status:
+                          type: "boolean"
+                          description: "Status of the actuator (on/off)"
+                          example: "on"
+                        command_feed_id:
+                          type: "string"
+                          description: "Feed ID for actuator commands"
+                          example: "hcmut_smart_farm/users/VVRsnPoAEqSbUa9QLwXLgj2D9Zx2/envs/my_simple_garden/pump/actuators/actuator_101/command"
+                        status_feed_id:
+                          type: "string"
+                          description: "Feed ID for actuator status"
+                          example: "hcmut_smart_farm/users/VVRsnPoAEqSbUa9QLwXLgj2D9Zx2/envs/my_simple_garden/pump/actuators/actuator_101/status"
+                        last_command:
+                          type: "string"
+                          description: "Last command sent to the actuator"
+                          example: ""
+                        auto_mode:
+                          type: "boolean"
+                          description: "Indicates if the actuator is in auto mode"
+                          example: false
+                        min:
+                          type: "number"
+                          description: "Minimum threshold for the actuator"
+                          example: 0
+                        max:
+                          type: "number"
+                          description: "Maximum threshold for the actuator"
+                          example: 0
+        "401":
+          description: "Unauthorized access"
+        "403":
+          description: "Forbidden access"
+        "404":
+          description: "Environment or actuators not found"
+      security:
+        - bearerAuth: []
+
+
+  /api/v1/users/{user_id}/environments/{env_id}/actuators/{actuator_id}:
+    delete:
+      summary: "Delete a specific actuator from an environment"
+      description: >
+        Deletes an actuator resource identified by `actuator_id` from the database. 
+        Also removes the actuator reference from the associated environment document.
+        Requires the user to be authenticated and have the appropriate role (`admin` or `user`).
+      tags:
+        - "Actuator"
+      parameters:
+        - name: "user_id"
+          in: "path"
+          required: true
+          description: "The ID of the user who owns the environment."
+          schema:
+            type: "string"
+            example: "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2"
+        - name: "env_id"
+          in: "path"
+          required: true
+          description: "The ID of the environment containing the actuator."
+          schema:
+            type: "string"
+            example: "my_simple_garden"
+        - name: "actuator_id"
+          in: "path"
+          required: true
+          description: "The ID of the actuator to be deleted."
+          schema:
+            type: "string"
+            example: "actuator_101"
+      responses:
+        "204":
+          description: "Actuator successfully deleted."
+        "404":
+          description: "Actuator with the specified ID was not found."
+        "401":
+          description: "Authentication is required to access this resource."
+        "403":
+          description: "User does not have the required role to perform this action."
       security:
         - bearerAuth: []

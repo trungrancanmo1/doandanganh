@@ -9,13 +9,8 @@ data_queue = queue.Queue()
 
 def process_record(record):
     '''
-    - Persist data to the FireStore
+    - Persist data to the FluxDb
     '''
-    # record = {
-    #     'data' : new_value,
-    #     'timestamp' : datetime.now(),
-    #     'unit' : unit
-    # }
     try:
         feed_id = record.get('feed_id')
         firestore_db\
@@ -34,5 +29,6 @@ def worker():
     '''
     while True:
         record = data_queue.get()
-        process_record(record)
+        # process_record(record)
+        logger.info(f'Process {record}')
         data_queue.task_done()

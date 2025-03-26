@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from firebase import firestore_db
-from adafruitclient import mqtt_client
+from adafruitio_client import mqtt_client
 from flask import current_app
 
 

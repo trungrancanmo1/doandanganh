@@ -4,7 +4,13 @@
     - referenced from https://firebase.google.com/docs/firestore/quickstart#python
 '''
 from .firestore_util import connect_firestore
-from .realtime_util import connect_realtime
+import warnings
 
 firestore_db = connect_firestore()
-realtime_db = connect_realtime()
+
+warnings.warn(
+    "The 'my_package' package is deprecated and will be removed in future versions. "
+    "Consider using 'new_package' instead.",
+    DeprecationWarning,
+    stacklevel=2
+)
