@@ -52,14 +52,14 @@ class SignalIlluminatorView(views.APIView):
             decode = json.dumps(payload).encode('utf-8')
 
             try:
-                mqtt_client.publish(topic=topic, payload=decode, qos=2)
+                mqtt_client.publish(topic=topic, payload=decode, qos=0)
             except Exception as e:
                 return Response({
                     'error': 'Failed to publish topic',
                     'detail': str(e),
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            obj = IlluminatorControl.objects.create(value=value, timestamp=timestamp)
+            obj = IlluminatorControl.objects.create(value=value, timestamp=timestamp, user=request.user)
             serializer = IlluminatorControlSerializer(obj)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
