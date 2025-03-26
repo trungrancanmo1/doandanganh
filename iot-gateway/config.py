@@ -13,10 +13,11 @@ EMQX_URL        ='z7f54af0.ala.dedicated.aws.emqxcloud.com'
 USER_ID         ='VVRsnPoAEqSbUa9QLwXLgj2D9Zx2'
 ENV_ID          ='my_simple_garden'
 SENSOR_ID       =['sensor-101', 'sensor-102', 'sensor-103']
-ACTUATOR_ID     =['actuator-101', 'actuator-102', 'actuator-103', 'actuator-104']
 SENSOR_TYPE     =['temperature', 'himidity', 'light']
-ACTUATOR_TYPE   =['fan', 'pump', 'light', '---']
-APP_NAME        = 'hcmut-smart-farm'
+ACTUATOR_ID     =['actuator-101', 'actuator-102', 'actuator-103', 'actuator-104']
+ACTUATOR_TYPE   =['fan', 'pump', 'light', 'heater']
+APP_NAME        ='hcmut-smart-farm'
+ENCODE_SCHEME   ='utf-8'
 
 
 def make_topic(device_id : str, topic_type : str, device_type : str) -> str:
@@ -44,3 +45,32 @@ def make_topic(device_id : str, topic_type : str, device_type : str) -> str:
 
     # print(topic)
     return topic
+
+
+# ==================================================
+# DATA TEMPLATE FOR SENSORS
+# ==================================================
+sample_sensor_data =  {
+    "user_id": "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2",
+    "env_id": "my_simple_garden",
+    "sensor_id": "sensor-101",
+    ##########################
+    "timestamp": "",
+    "type": "temperature",
+    "value": 40.1,
+    "state": 0 # optional, for on or off
+}
+
+
+# ==================================================
+# DATA TEMPLATE FOR ACTUATORS
+# ==================================================
+sample_actuator_data =  {
+    "user_id": "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2",
+    "env_id": "my_simple_garden",
+    "actuator_id": "actuator-101",
+    ##########################
+    "timestamp": "",
+    "type": "fan",
+    "value": 40.1 ########### always float
+}
