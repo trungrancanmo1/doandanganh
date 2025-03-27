@@ -228,7 +228,7 @@ INFLUXDB = {
     "host": "https://eu-central-1-1.aws.cloud2.influxdata.com",  # Change to your InfluxDB host
     "token": os.getenv('INFLUXDB_TOKEN'),
     "org": "hcmut-student",
-    "bucket": "test-bucket",
+    "bucket": "hcmut-smart-farm",
 }
 MEASUREMENT = 'actuator_data'
 
