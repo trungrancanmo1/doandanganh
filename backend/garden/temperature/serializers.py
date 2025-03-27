@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import TemperatureBound, TemperatureRecord
+from .models import TemperatureBound, TemperatureRecord, TemperatureControlMode
 
 ABSOLUTE_ZERO_IN_CELCIUS = -273.15
 
@@ -40,3 +40,9 @@ class TemperatureRecordSerializer(serializers.ModelSerializer):
         if value < ABSOLUTE_ZERO_IN_CELCIUS:
             raise serializers.ValidationError('Temperature cannot be lower than absolute zero')
         return value
+
+
+class TemperatureControlModeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TemperatureControlMode
+        fields = ['manual']
