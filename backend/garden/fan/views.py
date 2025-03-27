@@ -1,16 +1,13 @@
+from django.shortcuts import render
+
+# Create your views here.
 from django.utils import timezone
 from rest_framework import generics, views, status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import exceptions
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from .serializers import IlluminatorControlSerializer
-from .models import IlluminatorControl
-from django.conf import settings
+from .serializers import ControlFanSerializer
 
-from aio_helper.client import get_aio_client
-from aio_helper.feed import get_or_create_feed
-from aio_helper.data import get_unread_data_from_feed
 
 from garden.settings import USER, MEASUREMENT, INFLUXDB
 from utils import make_topic, send_command, ifdb_client
@@ -21,17 +18,16 @@ from influxdb_client_3 import Point
 import json
 
 # Create your views here.
-
-
 #===================================
 # INFLUX DATABASE ADDED
 # 👌👌👌👌👌
 #===================================
-class SignalIlluminatorView(views.APIView):
+class ControlFanView(views.APIView):
     permission_classes = [IsAuthenticated]
-    
+
+
     def post(self, request):
-        serializer = IlluminatorControlSerializer(data=request.data)
+        serializer = ControlFanSerializer(data=request.data)
 
         if serializer.is_valid():
             value = serializer.validated_data['value']
@@ -41,10 +37,10 @@ class SignalIlluminatorView(views.APIView):
             payload = {
                 'user_id' : USER['user_id'],
                 'env_id' : USER['env_id'],
-                'actuator_id' : 'actuator-103',
+                'actuator_id' : 'actuator-101',
                 'timestamp' : timestamp,
-                'type' : 'light',
-                'value' : value
+                'type' : 'fan',
+                'value' : float(value)
             }
 
             # 2. encode the payload
@@ -74,18 +70,6 @@ class SignalIlluminatorView(views.APIView):
             }
 
             return Response(data=response, status=status.HTTP_200_OK)
-
-            try:
-                mqtt_client.publish(topic=topic, payload=decode, qos=0)
-            except Exception as e:
-                return Response({
-                    'error': 'Failed to publish topic',
-                    'detail': str(e),
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-            obj = IlluminatorControl.objects.create(value=value, timestamp=timestamp, user=request.user)
-            serializer = IlluminatorControlSerializer(obj)
-            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -93,9 +77,9 @@ class SignalIlluminatorView(views.APIView):
 # INFLUX DATABASE ADDED
 # 👌👌👌👌👌
 #===================================
-class RetrieveIlluminatorSignalView(generics.ListAPIView):
+class GetFanHistoryView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = IlluminatorControlSerializer
+    serializer_class = ControlFanSerializer
     pagination_class = PageNumberPagination
     
     def get_queryset(self):
@@ -107,7 +91,7 @@ class RetrieveIlluminatorSignalView(generics.ListAPIView):
         SELECT time as timestamp, value
         FROM 'actuator_data'
         WHERE 
-        type = 'light'
+        type = 'fan'
         AND
         TIME > now() - interval '1 day'
         ORDER BY time DESC
@@ -120,4 +104,3 @@ class RetrieveIlluminatorSignalView(generics.ListAPIView):
         # INFLUX DATABASE
         #===================================
         return data_list
-        return IlluminatorControl.objects.filter(user=self.request.user)

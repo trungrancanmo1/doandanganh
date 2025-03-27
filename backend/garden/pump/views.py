@@ -1,16 +1,10 @@
 from django.utils import timezone
 from rest_framework import generics, views, status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import exceptions
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from .serializers import IlluminatorControlSerializer
-from .models import IlluminatorControl
-from django.conf import settings
+from .serializers import ControlPumperSerializer
 
-from aio_helper.client import get_aio_client
-from aio_helper.feed import get_or_create_feed
-from aio_helper.data import get_unread_data_from_feed
 
 from garden.settings import USER, MEASUREMENT, INFLUXDB
 from utils import make_topic, send_command, ifdb_client
@@ -21,17 +15,16 @@ from influxdb_client_3 import Point
 import json
 
 # Create your views here.
-
-
 #===================================
 # INFLUX DATABASE ADDED
 # 👌👌👌👌👌
 #===================================
-class SignalIlluminatorView(views.APIView):
+class ControlPumperView(views.APIView):
     permission_classes = [IsAuthenticated]
-    
+
+
     def post(self, request):
-        serializer = IlluminatorControlSerializer(data=request.data)
+        serializer = ControlPumperSerializer(data=request.data)
 
         if serializer.is_valid():
             value = serializer.validated_data['value']
@@ -41,10 +34,10 @@ class SignalIlluminatorView(views.APIView):
             payload = {
                 'user_id' : USER['user_id'],
                 'env_id' : USER['env_id'],
-                'actuator_id' : 'actuator-103',
+                'actuator_id' : 'actuator-102',
                 'timestamp' : timestamp,
-                'type' : 'light',
-                'value' : value
+                'type' : 'pump',
+                'value' : float(value)
             }
 
             # 2. encode the payload
@@ -93,9 +86,9 @@ class SignalIlluminatorView(views.APIView):
 # INFLUX DATABASE ADDED
 # 👌👌👌👌👌
 #===================================
-class RetrieveIlluminatorSignalView(generics.ListAPIView):
+class GetPumperHistoryView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = IlluminatorControlSerializer
+    serializer_class = ControlPumperSerializer
     pagination_class = PageNumberPagination
     
     def get_queryset(self):
@@ -107,7 +100,7 @@ class RetrieveIlluminatorSignalView(generics.ListAPIView):
         SELECT time as timestamp, value
         FROM 'actuator_data'
         WHERE 
-        type = 'light'
+        type = 'pump'
         AND
         TIME > now() - interval '1 day'
         ORDER BY time DESC

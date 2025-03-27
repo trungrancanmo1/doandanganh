@@ -1,6 +1,12 @@
-version: "3.8"
-
 services:
+
+  redis:
+    image: "redis:latest"
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+
   mqtt_service:
     build: .
     container_name: mqtt_service
@@ -10,6 +16,7 @@ services:
     depends_on:
       - redis
 
+
   celery_worker:
     build: .
     container_name: celery_worker
@@ -18,9 +25,3 @@ services:
     command: ["poetry", "run", "celery", "-A", "local_data_process_service.capp", "worker", "--loglevel=info"]
     depends_on:
       - redis
-
-  redis:
-    image: "redis:latest"
-    container_name: redis
-    ports:
-      - "6379:6379"
