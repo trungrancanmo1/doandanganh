@@ -67,22 +67,22 @@ const DashboardOverview = () => {
           "light"
         ].map((type) => `http://127.0.0.1:8000/api/${type}/record/sync/`);
   
-        await Promise.all(syncUrls.map(url => axiosInstance.post(url)));
+        // await Promise.all(syncUrls.map(url => axiosInstance.post(url)));
   
         // 2. Lấy chỉ số mới nhất
         const [humidity, temp, light] = await Promise.all([
-          axiosInstance.get("http://127.0.0.1:8000/api/moisture/record/get/recent/?n=1"),
-          axiosInstance.get("http://127.0.0.1:8000/api/temperature/record/get/recent/?n=1"),
-          axiosInstance.get("http://127.0.0.1:8000/api/light/record/get/recent/?n=1"),
+          axiosInstance.get("/moisture/record/get/recent/?n=1"),
+          axiosInstance.get("/temperature/record/get/recent/?n=1"),
+          axiosInstance.get("/light/record/get/recent/?n=1"),
         ]);
-  
+    
         // 3. Lấy lịch sử biểu đồ (10 điểm gần nhất)
         const [humidityRes, tempRes, lightRes] = await Promise.all([
-          axiosInstance.get("http://127.0.0.1:8000/api/moisture/record/get/recent/?n=10"),
-          axiosInstance.get("http://127.0.0.1:8000/api/temperature/record/get/recent/?n=10"),
-          axiosInstance.get("http://127.0.0.1:8000/api/light/record/get/recent/?n=10"),
+          axiosInstance.get("/moisture/record/get/recent/?n=10"),
+          axiosInstance.get("/temperature/record/get/recent/?n=10"),
+          axiosInstance.get("/light/record/get/recent/?n=10"),
         ]);
-  
+    
         const formatData = (data) =>
           data.map((item) => ({
             time: new Date(item.timestamp).toLocaleTimeString([], {
@@ -91,20 +91,19 @@ const DashboardOverview = () => {
             }),
             value: item.value,
           }));
-  
+    
         setHumidityIndex(formatData(humidity.data));
         setTempIndex(formatData(temp.data));
         setLightIndex(formatData(light.data));
-  
+    
         setHumidityData(formatData(humidityRes.data));
         setTempData(formatData(tempRes.data));
         setLightData(formatData(lightRes.data));
-  
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu biểu đồ:", error);
       }
     };
-  
+    
     fetchData();
   }, [navigate]);
   

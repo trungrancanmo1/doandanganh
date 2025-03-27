@@ -6,20 +6,6 @@ import axiosInstance from "../../components/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
-const heatHistoryData = [
-  { time: "14:00", status: "Bật" },
-  { time: "13:00", status: "Tắt" },
-  { time: "12:00", status: "Bật" },
-  { time: "11:00", status: "Tắt" },
-];
-
-const fanHistoryData = [
-  { time: "14:00", status: "Bật" },
-  { time: "13:00", status: "Tắt" },
-  { time: "12:00", status: "Bật" },
-  { time: "10:00", status: "Tắt" },
-];
-
 
 const DashboardTempPage = () => {
 
@@ -28,6 +14,25 @@ const DashboardTempPage = () => {
   const [editValues, setEditValues] = useState({ lowest: "", highest: "" });
   const [currentTemp, setCurrentTemp] = useState(null);
   const navigate = useNavigate();
+  // 💡 Đèn sưởi
+  const [heatHistory, setHeatHistory] = useState([]);
+  const [heaterOn, setHeaterOn] = useState(false);
+  const [isHeaterManualMode, setIsHeaterManualMode] = useState(true);
+  const [heatControlError, setHeatControlError] = useState(null);
+  const [isLoadingHeatHistory, setIsLoadingHeatHistory] = useState(false);
+  const [heatPage, setHeatPage] = useState(1);
+  const [totalHeatPages, setTotalHeatPages] = useState(1);
+
+  // 🌀 Quạt thông gió
+  const [fanHistory, setFanHistory] = useState([]);
+  const [fanOn, setFanOn] = useState(false);
+  const [isFanManualMode, setIsFanManualMode] = useState(true);
+  const [fanControlError, setFanControlError] = useState(null);
+  const [isLoadingFanHistory, setIsLoadingFanHistory] = useState(false);
+  const [fanPage, setFanPage] = useState(1);
+  const [totalFanPages, setTotalFanPages] = useState(1);
+
+
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -66,7 +71,7 @@ const DashboardTempPage = () => {
     const fetchCurrentTemp = async () => {
       try {
         // Gửi request sync trước
-        await axiosInstance.post("/temperature/record/sync/");
+        // await axiosInstance.post("/temperature/record/sync/");
         // Sau đó lấy giá trị mới nhất
         const res = await axiosInstance.get("/temperature/record/get/recent/?n=1");
         if (res.data && res.data.length > 0) {
@@ -80,6 +85,157 @@ const DashboardTempPage = () => {
     fetchTempBound();
     fetchCurrentTemp();
   }, [navigate]);
+
+  const fetchHeaterHistory = async () => {
+    setIsLoadingHeatHistory(true); // Bắt đầu tải
+    try {
+      const res = await axiosInstance.get("/heater/history?page=1");
+      const formatted = res.data.results.map((item) => ({
+        time: new Date(item.timestamp).toLocaleTimeString("vi-VN", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        status: item.value > 0 ? "Bật" : "Tắt",
+      }));
+      setHeatHistory(formatted);
+      setTotalHeatPages(Math.ceil(res.data.count / res.data.results.length));
+    } catch (err) {
+      console.error("Lỗi khi tải lịch sử đèn sưởi:", err);
+    } finally {
+      setIsLoadingHeatHistory(false); // Kết thúc tải dù thành công hay lỗi
+    }
+  };
+  
+  const fetchFanHistory = async () => {
+    setIsLoadingFanHistory(true); // Bắt đầu tải
+    try {
+      const res = await axiosInstance.get("/fan/history?page=1");
+      const formatted = res.data.results.map((item) => ({
+        time: new Date(item.timestamp).toLocaleTimeString("vi-VN", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        status: item.value > 0 ? "Bật" : "Tắt",
+      }));
+      setFanHistory(formatted);
+      setTotalFanPages(Math.ceil(res.data.count / res.data.results.length));
+    } catch (err) {
+      console.error("Lỗi khi tải lịch sử quạt:", err);
+    } finally {
+      setIsLoadingFanHistory(false); // Kết thúc tải dù thành công hay lỗi
+    }
+  };
+
+  const fetchCurrentHeaterStatus = async () => {
+    try {
+      const res = await axiosInstance.get("/heater/history?page=1");
+      const data = res.data.results;
+      if (data.length > 0) {
+        const latest = data[0];
+        setHeaterOn(latest.value > 0);
+      }
+    } catch (err) {
+      console.error("Lỗi khi lấy trạng thái đèn sưởi:", err);
+    }
+  };
+  
+  const fetchCurrentFanStatus = async () => {
+    try {
+      const res = await axiosInstance.get("/fan/history?page=1");
+      const data = res.data.results;
+      if (data.length > 0) {
+        const latest = data[0];
+        setFanOn(latest.value > 0);
+      }
+    } catch (err) {
+      console.error("Lỗi khi lấy trạng thái quạt:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchHeaterHistory();
+    fetchCurrentHeaterStatus();
+  }, []);
+  
+  useEffect(() => {
+    fetchFanHistory();
+    fetchCurrentFanStatus();
+  }, []);
+
+  useEffect(() => {
+    if (isHeaterManualMode) setHeatControlError(null);
+  }, [isHeaterManualMode]);
+  
+  useEffect(() => {
+    if (isFanManualMode) setFanControlError(null);
+  }, [isFanManualMode]);
+  
+  const toggleHeater = async () => {
+    if (!isHeaterManualMode) {
+      setHeatControlError("Chỉ có thể điều chỉnh đèn sưởi ở chế độ thủ công.");
+      return;
+    }
+  
+    try {
+      const newValue = heaterOn ? 0 : 1;
+      const res = await axiosInstance.post("/heater/control/", {
+        value: newValue,
+      });
+  
+      const responseValue = res.data?.value;
+      setHeaterOn(responseValue === 1);
+      setHeatControlError(null);
+    } catch (err) {
+      if (err.response) {
+        const status = err.response.status;
+        const data = err.response.data;
+  
+        if (status === 400) {
+          setHeatControlError(data?.value?.[0] || "Lỗi giá trị gửi lên.");
+        } else if (status === 405) {
+          setHeatControlError(data?.detail || "Không được phép thực hiện thao tác này.");
+        } else {
+          setHeatControlError("Đã xảy ra lỗi khi điều chỉnh đèn sưởi.");
+        }
+      } else {
+        setHeatControlError("Không thể kết nối đến máy chủ.");
+      }
+    }
+  };
+
+  const toggleFan = async () => {
+    if (!isFanManualMode) {
+      setFanControlError("Chỉ có thể điều chỉnh quạt thông gió ở chế độ thủ công.");
+      return;
+    }
+  
+    try {
+      const newValue = fanOn ? 0 : 70;
+      const res = await axiosInstance.post("/fan/control/", {
+        value: newValue,
+      });
+  
+      const responseValue = res.data?.value;
+      setFanOn(responseValue === 70);
+      setFanControlError(null);
+    } catch (err) {
+      if (err.response) {
+        const status = err.response.status;
+        const data = err.response.data;
+  
+        if (status === 400) {
+          setFanControlError(data?.value?.[0] || "Lỗi giá trị gửi lên.");
+        } else if (status === 405) {
+          setFanControlError(data?.detail || "Không được phép thực hiện thao tác này.");
+        } else {
+          setFanControlError("Đã xảy ra lỗi khi điều chỉnh quạt.");
+        }
+      } else {
+        setFanControlError("Không thể kết nối đến máy chủ.");
+      }
+    }
+  };
+  
 
   const handleEditClick = () => {
     setEditValues({
@@ -237,58 +393,145 @@ const DashboardTempPage = () => {
 
           {/* Điều chỉnh đèn và quạt */}
           <div className="flex justify-between mt-6">
+            {/* Điều chỉnh đèn sưởi */}
             <div className="w-[48%]">
               <h2 className="text-xl font-bold mb-2">Điều chỉnh đèn sưởi</h2>
               <div className="bg-white border shadow rounded-lg flex items-center p-4 py-6">
                 <label className="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" />
-                  <div className="relative w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-gray-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-                  <span className="ms-3 text-sm font-bold">Bật</span>
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={heaterOn}
+                    onChange={toggleHeater}
+                  />
+                  <div
+                    className={`relative w-11 h-6 ${
+                      !isHeaterManualMode ? 'bg-gray-300' : 'bg-gray-400'
+                    } peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-gray-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${
+                      heaterOn ? 'peer-checked:bg-green-500' : ''
+                    }`}
+                  ></div>
+                  <span className="ms-3 text-sm font-bold">{heaterOn ? 'Bật' : 'Tắt'}</span>
                 </label>
               </div>
+              {heatControlError && (
+                <div className="mt-2 text-red-600 text-sm">{heatControlError}</div>
+              )}
             </div>
 
+            {/* Điều chỉnh quạt thông gió */}
             <div className="w-[48%]">
               <h2 className="text-xl font-bold mb-2">Điều chỉnh quạt thông gió</h2>
               <div className="bg-white border shadow rounded-lg flex items-center p-4 py-6">
                 <label className="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" />
-                  <div className="relative w-11 h-6 bg-gray-400 peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-gray-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-                  <span className="ms-3 text-sm font-bold">Bật</span>
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={fanOn}
+                    onChange={toggleFan}
+                  />
+                  <div
+                    className={`relative w-11 h-6 ${
+                      !isFanManualMode ? 'bg-gray-300' : 'bg-gray-400'
+                    } peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-gray-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${
+                      fanOn ? 'peer-checked:bg-green-500' : ''
+                    }`}
+                  ></div>
+                  <span className="ms-3 text-sm font-bold">{fanOn ? 'Bật' : 'Tắt'}</span>
                 </label>
               </div>
+              {fanControlError && (
+                <div className="mt-2 text-red-600 text-sm">{fanControlError}</div>
+              )}
             </div>
           </div>
 
-          {/* Lịch sử hoạt động */}
+
+          {/* Lịch sử hoạt động đèn sưởi và quạt */}
           <div className="flex justify-between mt-6">
+            {/* Đèn sưởi */}
             <div className="w-[48%]">
               <h2 className="text-xl font-bold mb-2">Lịch sử hoạt động đèn sưởi</h2>
               <div className="border rounded-lg shadow-md bg-white">
-                {heatHistoryData.map((item, index) => (
-                  <div key={index} className="flex items-center px-4 py-3 border-b last:border-none">
-                    <span className="mr-2 text-lg">💡</span>
-                    <div className="flex-grow">
-                      <p className="text-sm font-semibold">Thời gian: {item.time}</p>
-                      <p className="text-sm">Trạng thái: {item.status}</p>
+                {isLoadingHeatHistory ? (
+                  <div className="p-4 text-sm text-gray-500">Đang tải lịch sử...</div>
+                ) : heatHistory.length > 0 ? (
+                  heatHistory.map((item, index) => (
+                    <div key={index} className="flex items-center px-4 py-3 border-b last:border-none">
+                      <span className="mr-2 text-lg">💡</span>
+                      <div className="flex-grow">
+                        <p className="text-sm font-semibold">Thời gian: {item.time}</p>
+                        <p className="text-sm">Trạng thái: {item.status}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <div className="p-4 text-sm text-gray-500">Không có dữ liệu.</div>
+                )}
+
+                {/* 🔽 Phân trang đèn sưởi */}
+                <div className="flex justify-center items-center mt-4 space-x-4">
+                  <button
+                    onClick={() => setHeatPage((prev) => Math.max(1, prev - 1))}
+                    disabled={heatPage === 1}
+                    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                  >
+                    Trang trước
+                  </button>
+                  <span>
+                    Trang {heatPage} / {totalHeatPages}
+                  </span>
+                  <button
+                    onClick={() => setHeatPage((prev) => Math.min(totalHeatPages, prev + 1))}
+                    disabled={heatPage === totalHeatPages}
+                    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                  >
+                    Trang sau
+                  </button>
+                </div>
               </div>
             </div>
 
+            {/* Quạt thông gió */}
             <div className="w-[48%]">
               <h2 className="text-xl font-bold mb-2">Lịch sử hoạt động quạt</h2>
               <div className="border rounded-lg shadow-md bg-white">
-                {fanHistoryData.map((item, index) => (
-                  <div key={index} className="flex items-center px-4 py-3 border-b last:border-none">
-                    <span className="mr-2 text-lg">🌀</span>
-                    <div className="flex-grow">
-                      <p className="text-sm font-semibold">Thời gian: {item.time}</p>
-                      <p className="text-sm">Trạng thái: {item.status}</p>
+                {isLoadingFanHistory ? (
+                  <div className="p-4 text-sm text-gray-500">Đang tải lịch sử...</div>
+                ) : fanHistory.length > 0 ? (
+                  fanHistory.map((item, index) => (
+                    <div key={index} className="flex items-center px-4 py-3 border-b last:border-none">
+                      <span className="mr-2 text-lg">🌀</span>
+                      <div className="flex-grow">
+                        <p className="text-sm font-semibold">Thời gian: {item.time}</p>
+                        <p className="text-sm">Trạng thái: {item.status}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <div className="p-4 text-sm text-gray-500">Không có dữ liệu.</div>
+                )}
+
+                {/* 🔽 Phân trang quạt */}
+                <div className="flex justify-center items-center mt-4 space-x-4">
+                  <button
+                    onClick={() => setFanPage((prev) => Math.max(1, prev - 1))}
+                    disabled={fanPage === 1}
+                    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                  >
+                    Trang trước
+                  </button>
+                  <span>
+                    Trang {fanPage} / {totalFanPages}
+                  </span>
+                  <button
+                    onClick={() => setFanPage((prev) => Math.min(totalFanPages, prev + 1))}
+                    disabled={fanPage === totalFanPages}
+                    className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+                  >
+                    Trang sau
+                  </button>
+                </div>
               </div>
             </div>
           </div>

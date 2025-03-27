@@ -23,6 +23,7 @@ from .views import (
     RetrieveTemperatureRecordListView,
     SyncMostRecentTemperatureRecord,
     DeleteOldestTemperatureRecord,
+    ManageTemperatureControlModeView,
 )
 
 urlpatterns = [
@@ -32,4 +33,5 @@ urlpatterns = [
     path('record/get/', RetrieveTemperatureRecordListView.as_view(), name='temperature_records_retrieve'),
     path('record/sync/', SyncMostRecentTemperatureRecord.as_view(), name='most_recent_temperature_sync'),
     path('record/delete/', DeleteOldestTemperatureRecord.as_view(), name='oldest_temperature_delete'),
+    path('control/mode/', ManageTemperatureControlModeView.as_view(), name='temperature_control_mode_manage'),
 ]
