@@ -12,6 +12,10 @@ from aio_helper.client import get_aio_client
 from aio_helper.feed import get_or_create_feed
 from aio_helper.data import get_unread_data_from_feed
 
+from utils import ifdb_client
+from garden.settings import INFLUXDB
+import pandas as pd
+
 # Create your views here.
 
 class UpdateTemperatureBoundView(generics.UpdateAPIView):
@@ -35,6 +39,9 @@ class RetrieveTemperatureBoundView(generics.RetrieveAPIView):
             raise exceptions.NotFound('temperature bound not found for this user')
     
 
+#===================================
+# INFLUX DATABASE ADDED
+#===================================
 class RetrieveMostRecentTemperatureRecord(views.APIView):
     permission_classes = [IsAuthenticated]
     
@@ -47,13 +54,35 @@ class RetrieveMostRecentTemperatureRecord(views.APIView):
                 raise exceptions.ValidationError('n must be an integer')
             if n <= 0:
                 raise exceptions.ValidationError('n must be positive')
-        records = TemperatureRecord.objects.filter(user=self.request.user).order_by('-timestamp')
-        if n is not None:
-            records = records[:n]
+        # records = TemperatureRecord.objects.filter(user=self.request.user).order_by('-timestamp')
+        # if n is not None:
+        #     records = records[:n]
+
+        #===================================
+        # INFLUX DATABASE
+        #===================================
+        query = f'''
+        SELECT time as timestamp, value
+        FROM 'sensor_data'
+        WHERE type = 'temperature'
+        ORDER BY time DESC
+        LIMIT {int(n)}
+        '''
+
+        table = ifdb_client.query(query=query, database=INFLUXDB['bucket'])
+        data_frame = table.to_pandas()
+        data_list = data_frame.to_dict(orient='records')
+        
+        return Response(data_list, status=status.HTTP_200_OK)
+        #===================================
+        # INFLUX DATABASE
+        #===================================
+
         serializer = TemperatureRecordSerializer(records, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# NOTE: ⚠️should not be used (use get/recent instead)
 class RetrieveTemperatureRecordListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TemperatureRecordSerializer
@@ -63,10 +92,16 @@ class RetrieveTemperatureRecordListView(generics.ListAPIView):
         return TemperatureRecord.objects.filter(user=self.request.user)
 
 
+#==========================
+# NOTE: ⛓️‍💥 DEPRECATED
+#==========================
 class SyncMostRecentTemperatureRecord(views.APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
+
+        raise exceptions.APIException('This endpoint is deprecated and should not be used.')
+
         aio_username = settings.AIO_USERNAME
         aio_key = settings.AIO_KEY
         try:
@@ -110,6 +145,7 @@ class SyncMostRecentTemperatureRecord(views.APIView):
             )
 
 
+# NOTE: InfluxDB has its own retention policy
 class DeleteOldestTemperatureRecord(views.APIView):
     permission_classes = [IsAuthenticated]
     

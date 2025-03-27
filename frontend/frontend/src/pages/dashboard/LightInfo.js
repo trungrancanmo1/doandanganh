@@ -22,8 +22,9 @@ const DashboardLightPage = () => {
   const [lightHistory, setLightHistory] = useState([]);
   const [lightOn, setLightOn] = useState(false);
   const [lightControlError, setLightControlError] = useState(null);
-
-
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [historyPage, setHistoryPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -79,38 +80,45 @@ const DashboardLightPage = () => {
       }
     };
 
-    const fetchLightHistory = async () => {
-      try {
-        let url = "/light/control/illuminator/get/";
-        const allResults = [];
-    
-        // Gọi API nhiều lần nếu có phân trang
-        while (url) {
-          const res = await axiosInstance.get(url);
-          allResults.push(...res.data.results);
-          url = res.data.next;  // Nếu null thì thoát vòng lặp
-        }
-    
-        const formatted = allResults.map((item) => ({
-          time: new Date(item.timestamp).toLocaleTimeString("vi-VN", { hour: '2-digit', minute: '2-digit' }),
-          status: item.value > 0 ? "Bật" : "Tắt"
-        }));
-    
-        setLightHistory(formatted);
-
-        if (allResults.length > 0) {
-          setLightOn(allResults[0].value === 1);
-        }
-      } catch (err) {
-        console.error("Lỗi khi tải lịch sử đèn:", err);
-      }
-    };
-
-    fetchLightHistory();
     fetchLightMode();
     fetchLightBound();
     fetchCurrentLight();
   }, [navigate]);
+
+  const fetchPaginatedHistory = async (page) => {
+    setIsLoadingHistory(true); // Bắt đầu tải
+    try {
+      const res = await axiosInstance.get(`/light/control/illuminator/get/?page=${page}`);
+      const formatted = res.data.results.map((item) => ({
+        time: new Date(item.timestamp).toLocaleTimeString("vi-VN", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        status: item.value > 0 ? "Bật" : "Tắt",
+      }));
+  
+      setLightHistory(formatted);
+      setTotalPages(Math.ceil(res.data.count / res.data.results.length));
+    } catch (err) {
+      console.error("Lỗi khi tải lịch sử đèn:", err);
+    } finally {
+      setIsLoadingHistory(false); // Kết thúc tải dù thành công hay lỗi
+    }
+  };
+  useEffect(() => {
+    fetchPaginatedHistory(historyPage);
+  }, [historyPage]);
+
+  useEffect(() => {
+    setHistoryPage(1);
+  }, [isManualMode, lightOn]);
+  
+  useEffect(() => {
+    if (isManualMode) {
+      setLightControlError(null);
+    }
+  }, [isManualMode]);
+  
 
   const toggleLight = async () => {
     if (!isManualMode) {
@@ -360,7 +368,9 @@ const DashboardLightPage = () => {
           {/* Lịch sử bật/tắt đèn */}
           <h2 className="text-xl font-bold mt-6 mb-2">Lịch sử bật, tắt đèn</h2>
           <div className="w-[48%] border rounded-lg shadow-md bg-white">
-            {lightHistory.length > 0 ? (
+            {isLoadingHistory ? (
+              <div className="p-4 text-sm text-gray-500">Đang tải lịch sử...</div>
+            ) : lightHistory.length > 0 ? (
               lightHistory.map((item, index) => (
                 <div key={index} className="flex items-center px-4 py-3 border-b last:border-none">
                   <span className="mr-2 text-lg">💡</span>
@@ -371,8 +381,30 @@ const DashboardLightPage = () => {
                 </div>
               ))
             ) : (
-              <div className="p-4 text-sm text-gray-500">Đang tải lịch sử...</div>
+              <div className="p-4 text-sm text-gray-500">Không có dữ liệu.</div>
             )}
+
+            {/* 🔽 Thêm phân trang ở đây */}
+            <div className="flex justify-center items-center mt-4 space-x-4">
+              <button
+                onClick={() => setHistoryPage((prev) => Math.max(1, prev - 1))}
+                disabled={historyPage === 1}
+                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+              >
+                Trang trước
+              </button>
+              <span>
+                Trang {historyPage} / {totalPages}
+              </span>
+              <button
+                onClick={() => setHistoryPage((prev) => Math.min(totalPages, prev + 1))}
+                disabled={historyPage === totalPages}
+                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+              >
+                Trang sau
+              </button>
+            </div>
+            {/* 🔼 Kết thúc phân trang */}
           </div>
         </div>
       </div>

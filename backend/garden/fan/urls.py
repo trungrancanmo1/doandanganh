@@ -16,22 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from . import views
+from .views import (
+    GetFanHistoryView,
+    ControlFanView,
+)
 
 urlpatterns = [
-    # path('', views.get_routes),
-    path('user/', include('user.urls')),
-    path('notification/', include('notification.urls')),
-    path('overview/', include('overview.urls')),
-    path('temperature/', include('temperature.urls')),
-    path('humidity/', include('humidity.urls')),
-    path('moisture/', include('moisture.urls')),
-    path('light/', include('light.urls')),
-    path('pest/', include('pest.urls')),
-    #####    #####
-    # ➕➕➕➕➕
-    #####    #####
-    path('pumper/', include('pump.urls')),
-    path('fan/', include('fan.urls')),
-    path('heater/', include('heater.urls'))
+    #⚠️NOTE: this is not so RESTful API
+    path('control/', ControlFanView.as_view(), name='control the fan'),
+    path('history/', GetFanHistoryView.as_view(), name="get fan's'history"),
 ]
