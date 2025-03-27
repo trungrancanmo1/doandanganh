@@ -71,3 +71,5 @@ node_modules/
 /service_account_key.json
 
 node_modules/
+
+/another-lightweight-backend/
