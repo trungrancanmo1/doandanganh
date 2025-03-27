@@ -116,6 +116,9 @@ class RetrieveMoistureRecordListView(generics.ListAPIView):
         return MoistureRecord.objects.filter(user=self.request.user)
 
 
+#==========================
+# NOTE: ⛓️‍💥 DEPRECATED
+#==========================
 class DeleteOldestMoistureRecord(views.APIView):
     permission_classes = [IsAuthenticated]
     
