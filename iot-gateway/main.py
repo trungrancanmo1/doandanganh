@@ -40,7 +40,11 @@ def on_message(mqttc, obj, msg):
     print(f"Received data: {data}")
 
     # control device
-    type = data['type'][:3]
+    type = data['type']
+    if type == 'light':
+        type = 'ill'
+    elif type == 'fan':
+        type = 'ven'
     value = int(data['value'])
     send_data = f"{type}_{value}"
     send_to_device(send_data)
