@@ -230,11 +230,13 @@ INFLUXDB = {
     "org": "hcmut-student",
     "bucket": "test-bucket",
 }
+MEASUREMENT = 'actuator_data'
 
 
 #==========================
 # 💀💀💀💀💀💀💀💀💀💀
-# 🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫
+# 💀🚫🚫🚫🚫🚫🚫🚫🚫💀
+# 💀💀💀💀💀💀💀💀💀💀
 # ASSUME THERE IS ONE USER
 #==========================
 APP_NAME        ='hcmut-smart-farm'
@@ -272,26 +274,11 @@ TOPIC_TYPE = [
 ]
 
 
-def make_topic(device_id : str, topic_type : str, device_type : str) -> str:
-    '''
-    - device_id must be in SENSOR_ID and ACTUATOR_ID
-    - topic_type : 'command', 'data'
-    - device_type must be in SENSOR_TYPE and ACTUATOR_TYPE
-
-    example :
-    - hcmut-smart-farm/VVRsnPoAEqSbUa9QLwXLgj2D9Zx2/my_simple_garden/actuator-103/cooler/command
-    - hcmut-smart-farm/VVRsnPoAEqSbUa9QLwXLgj2D9Zx2/my_simple_garden/sensor-101/temperature/data
-    '''
-    topic = '/'.join (
-        [
-            APP_NAME,
-            USER['user_id'],
-            USER['env_id'],
-            device_id,
-            device_type,
-            topic_type
-        ]
-    )
-
-    # print(topic)
-    return topic
+#==========================
+# MQTT BROKER INFO
+#==========================
+MQTT_BROKER = {
+    'username' : os.getenv('EMQX_USER_NAME'),
+    'password' : os.getenv('EMQX_PASSWORD'),
+    'url' : os.getenv('EMQX_URL')
+}

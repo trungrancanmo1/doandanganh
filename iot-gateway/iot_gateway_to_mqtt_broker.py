@@ -28,5 +28,5 @@ def send_data(payload : bytes, topic : str):
         "value": 40.0, ############## NOTE: always float
     }
     '''
-    mqtt_client.publish(topic=topic, payload=payload, qos=1)
+    mqtt_client.publish(topic=topic, payload=payload, qos=2)
     print(f'Publishing data to the topic {topic} successfully')

@@ -35,10 +35,15 @@ class RetrieveMoistureBoundView(generics.RetrieveAPIView):
             raise exceptions.NotFound('moisture bound not found for this user')
 
 
+#==========================
+# NOTE: ⛓️‍💥 DEPRECATED
+#==========================
 class SyncMostRecentMoistureRecord(views.APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
+        raise exceptions.APIException('This endpoint is deprecated and should not be used.')
+
         aio_username = settings.AIO_USERNAME
         aio_key = settings.AIO_KEY
         try:
@@ -101,6 +106,7 @@ class RetrieveMostRecentMoistureRecord(views.APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# NOTE: ⚠️should not be used (use get/recent instead)
 class RetrieveMoistureRecordListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = MoistureRecordSerializer
