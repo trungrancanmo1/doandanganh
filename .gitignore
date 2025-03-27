@@ -69,3 +69,7 @@ node_modules/
 .dataconnect
 
 /service_account_key.json
+
+node_modules/
+
+/another-lightweight-backend/

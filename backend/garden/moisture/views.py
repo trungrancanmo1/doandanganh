@@ -4,13 +4,17 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import exceptions
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from .serializers import MoistureBoundSerializer, MoistureRecordSerializer
-from .models import MoistureBound, MoistureRecord
+from .serializers import MoistureBoundSerializer, MoistureRecordSerializer, MoistureControlModeSerializer
+from .models import MoistureBound, MoistureRecord, MoistureControlMode
 from django.conf import settings
 
 from aio_helper.client import get_aio_client
 from aio_helper.feed import get_or_create_feed
 from aio_helper.data import get_unread_data_from_feed
+
+from utils import ifdb_client
+from garden.settings import INFLUXDB
+
 
 # Create your views here.
 
@@ -35,10 +39,15 @@ class RetrieveMoistureBoundView(generics.RetrieveAPIView):
             raise exceptions.NotFound('moisture bound not found for this user')
 
 
+#==========================
+# NOTE: ⛓️‍💥 DEPRECATED
+#==========================
 class SyncMostRecentMoistureRecord(views.APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
+        raise exceptions.APIException('This endpoint is deprecated and should not be used.')
+
         aio_username = settings.AIO_USERNAME
         aio_key = settings.AIO_KEY
         try:
@@ -94,13 +103,37 @@ class RetrieveMostRecentMoistureRecord(views.APIView):
                 raise exceptions.ValidationError('n must be an integer')
             if n <= 0:
                 raise exceptions.ValidationError('n must be positive')
-        records = MoistureRecord.objects.filter(user=self.request.user).order_by('-timestamp')
+            
+        # records = MoistureRecord.objects.filter(user=self.request.user).order_by('-timestamp')
+        #===================================
+        # INFLUX DATABASE
+        #===================================
+        query = f'''
+        SELECT time as timestamp, value
+        FROM 'sensor_data'
+        WHERE type = 'humidity'
+        ORDER BY time DESC
+        LIMIT {int(n)}
+        '''
+
+        # if n is not None:
+        #     records = records[:n]
+
+        table = ifdb_client.query(query=query, database=INFLUXDB['bucket'])
+        data_frame = table.to_pandas()
+        data_list = data_frame.to_dict(orient='records')
+        #===================================
+        # INFLUX DATABASE
+        #===================================
+        
+        return Response(data_list, status=status.HTTP_200_OK)
         if n is not None:
             records = records[:n]
         serializer = MoistureRecordSerializer(records, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# NOTE: ⚠️should not be used (use get/recent instead)
 class RetrieveMoistureRecordListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = MoistureRecordSerializer
@@ -110,6 +143,9 @@ class RetrieveMoistureRecordListView(generics.ListAPIView):
         return MoistureRecord.objects.filter(user=self.request.user)
 
 
+#==========================
+# NOTE: ⛓️‍💥 DEPRECATED
+#==========================
 class DeleteOldestMoistureRecord(views.APIView):
     permission_classes = [IsAuthenticated]
     
@@ -134,3 +170,12 @@ class DeleteOldestMoistureRecord(views.APIView):
             {'message': f"Deleted {count} oldest records"},
             status=status.HTTP_200_OK,
         )
+
+
+class ManageMoistureControlModeView(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MoistureControlModeSerializer
+    
+    def get_object(self):
+        obj, _ = MoistureControlMode.objects.get_or_create(user=self.request.user)
+        return obj

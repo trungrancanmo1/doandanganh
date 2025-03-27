@@ -61,23 +61,26 @@ const DashboardOverview = () => {
     const fetchData = async () => {
       try {
         // 1. Đồng bộ dữ liệu sensor
-        const syncUrls = ["moisture", "temperature", "light"].map(
-          (type) => `${type}/record/sync/`
-        );
-        await Promise.all(syncUrls.map((url) => axiosInstance.post(url)));
-    
+        const syncUrls = [
+          "moisture",
+          "temperature",
+          "light"
+        ].map((type) => `http://127.0.0.1:8000/api/${type}/record/sync/`);
+  
+        // await Promise.all(syncUrls.map(url => axiosInstance.post(url)));
+  
         // 2. Lấy chỉ số mới nhất
         const [humidity, temp, light] = await Promise.all([
-          axiosInstance.get("moisture/record/get/recent/?n=1"),
-          axiosInstance.get("temperature/record/get/recent/?n=1"),
-          axiosInstance.get("light/record/get/recent/?n=1"),
+          axiosInstance.get("/moisture/record/get/recent/?n=1"),
+          axiosInstance.get("/temperature/record/get/recent/?n=1"),
+          axiosInstance.get("/light/record/get/recent/?n=1"),
         ]);
     
         // 3. Lấy lịch sử biểu đồ (10 điểm gần nhất)
         const [humidityRes, tempRes, lightRes] = await Promise.all([
-          axiosInstance.get("moisture/record/get/recent/?n=10"),
-          axiosInstance.get("temperature/record/get/recent/?n=10"),
-          axiosInstance.get("light/record/get/recent/?n=10"),
+          axiosInstance.get("/moisture/record/get/recent/?n=10"),
+          axiosInstance.get("/temperature/record/get/recent/?n=10"),
+          axiosInstance.get("/light/record/get/recent/?n=10"),
         ]);
     
         const formatData = (data) =>

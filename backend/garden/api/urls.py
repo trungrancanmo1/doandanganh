@@ -28,4 +28,10 @@ urlpatterns = [
     path('moisture/', include('moisture.urls')),
     path('light/', include('light.urls')),
     path('pest/', include('pest.urls')),
+    #####    #####
+    # ➕➕➕➕➕
+    #####    #####
+    path('pumper/', include('pump.urls')),
+    path('fan/', include('fan.urls')),
+    path('heater/', include('heater.urls'))
 ]

@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     'user',
     
     'illuminator',
+
+    'utils'
 ]
 
 MIDDLEWARE = [
@@ -104,7 +106,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=110),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=7 * 24 * 60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -217,3 +219,66 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 FRONTEND_URL = os.getenv('FRONTEND_URL')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+#==========================
+# INFLUX DATABASE
+#==========================
+INFLUXDB = {
+    "host": "https://eu-central-1-1.aws.cloud2.influxdata.com",  # Change to your InfluxDB host
+    "token": os.getenv('INFLUXDB_TOKEN'),
+    "org": "hcmut-student",
+    "bucket": "test-bucket",
+}
+MEASUREMENT = 'actuator_data'
+
+
+#==========================
+# 💀💀💀💀💀💀💀💀💀💀
+# 💀🚫🚫🚫🚫🚫🚫🚫🚫💀
+# 💀💀💀💀💀💀💀💀💀💀
+# ASSUME THERE IS ONE USER
+#==========================
+APP_NAME        ='hcmut-smart-farm'
+USER = {
+    'user_id' : 'VVRsnPoAEqSbUa9QLwXLgj2D9Zx2',
+    'env_id' : 'my_simple_garden',
+    'sensor_id' : [
+        'sensor-101',
+        'sensor-102',
+        'sensor-103'
+    ],
+    'actuator_id' : [
+        'actuator-101',
+        'actuator-102',
+        'actuator-103',
+        'actuator-104'
+    ],
+    'sensor_type' : [
+        'temperature',
+        'humidity',
+        'light'
+    ],
+    'actuator_type' : [
+        'fan',
+        'pump',
+        'light',
+        'heater'
+    ],
+}
+
+TOPIC_TYPE = [
+    'command',
+    'data',
+    'status'
+]
+
+
+#==========================
+# MQTT BROKER INFO
+#==========================
+MQTT_BROKER = {
+    'username' : os.getenv('EMQX_USER_NAME'),
+    'password' : os.getenv('EMQX_PASSWORD'),
+    'url' : os.getenv('EMQX_URL')
+}
