@@ -34,7 +34,7 @@ class ControlPumperView(views.APIView):
             payload = {
                 'user_id' : USER['user_id'],
                 'env_id' : USER['env_id'],
-                'actuator_id' : 'actuator-101',
+                'actuator_id' : 'actuator-102',
                 'timestamp' : timestamp,
                 'type' : 'pump',
                 'value' : float(value)
