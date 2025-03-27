@@ -17,7 +17,6 @@ const DashboardTempPage = () => {
   // 💡 Đèn sưởi
   const [heatHistory, setHeatHistory] = useState([]);
   const [heaterOn, setHeaterOn] = useState(false);
-  const [isHeaterManualMode, setIsHeaterManualMode] = useState(true);
   const [heatControlError, setHeatControlError] = useState(null);
   const [isLoadingHeatHistory, setIsLoadingHeatHistory] = useState(false);
   const [heatPage, setHeatPage] = useState(1);
@@ -26,13 +25,12 @@ const DashboardTempPage = () => {
   // 🌀 Quạt thông gió
   const [fanHistory, setFanHistory] = useState([]);
   const [fanOn, setFanOn] = useState(false);
-  const [isFanManualMode, setIsFanManualMode] = useState(true);
   const [fanControlError, setFanControlError] = useState(null);
   const [isLoadingFanHistory, setIsLoadingFanHistory] = useState(false);
   const [fanPage, setFanPage] = useState(1);
   const [totalFanPages, setTotalFanPages] = useState(1);
 
-
+  const [isHeaterFanManualMode, setIsHeaterFanManualMode] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -78,10 +76,19 @@ const DashboardTempPage = () => {
           setCurrentTemp(res.data[0].value); 
         }
       } catch (err) {
-        console.error("Lỗi khi lấy ánh sáng hiện tại:", err);
+        console.error("Lỗi khi lấy nhiệt độ hiện tại:", err);
+      }
+    };
+    const fetchHeaterFanMode = async () => {
+      try {
+        const res = await axiosInstance.get("/temperature/control/mode/");
+        setIsHeaterFanManualMode(res.data.manual);
+      } catch (err) {
+        console.error("Lỗi khi lấy chế độ điều chỉnh đèn sưởi và quạt:", err);
       }
     };
   
+    fetchHeaterFanMode();
     fetchTempBound();
     fetchCurrentTemp();
   }, [navigate]);
@@ -162,16 +169,13 @@ const DashboardTempPage = () => {
     fetchCurrentFanStatus();
   }, []);
 
-  useEffect(() => {
-    if (isHeaterManualMode) setHeatControlError(null);
-  }, [isHeaterManualMode]);
+  // useEffect(() => {
+  //   if (isHeaterFanManualMode) setIsHeaterFanManualMode(null);
+  // }, [isHeaterFanManualMode]);
   
-  useEffect(() => {
-    if (isFanManualMode) setFanControlError(null);
-  }, [isFanManualMode]);
   
   const toggleHeater = async () => {
-    if (!isHeaterManualMode) {
+    if (!isHeaterFanManualMode) {
       setHeatControlError("Chỉ có thể điều chỉnh đèn sưởi ở chế độ thủ công.");
       return;
     }
@@ -204,7 +208,7 @@ const DashboardTempPage = () => {
   };
 
   const toggleFan = async () => {
-    if (!isFanManualMode) {
+    if (!isHeaterFanManualMode) {
       setFanControlError("Chỉ có thể điều chỉnh quạt thông gió ở chế độ thủ công.");
       return;
     }
@@ -236,6 +240,14 @@ const DashboardTempPage = () => {
     }
   };
   
+  const handleHeaterFanModeChange = async (manual) => {
+    try {
+      await axiosInstance.put("/temperature/control/mode/", { manual });  
+      setIsHeaterFanManualMode(manual);
+    } catch (err) {
+      console.error("Lỗi khi cập nhật chế độ đèn/quạt:", err);
+    }
+  };
 
   const handleEditClick = () => {
     setEditValues({
@@ -252,7 +264,7 @@ const DashboardTempPage = () => {
 
 
     try {
-      const res = await axiosInstance.patch("/api/temperature/bound/update/", {
+      const res = await axiosInstance.patch("/temperature/bound/update/", {
         lowest_allowed: lowest,
         highest_allowed: highest,
       });
@@ -378,18 +390,32 @@ const DashboardTempPage = () => {
             </div>
           </div>
 
-          {/* Chế độ điều chỉnh */}
+          {/* Chế độ điều chỉnh cho đèn sưởi & quạt thông gió */}
           <h2 className="text-xl font-bold mt-6 mb-2">Chế độ điều chỉnh</h2>
           <div className="grid grid-cols-2 gap-x-2 w-[50%] font-bold">
             <div className="p-4 py-6 bg-white border shadow rounded-lg flex items-center">
-              <input type="radio" name="temp-mode" className="mr-2" />
+              <input
+                type="radio"
+                name="heater-fan-mode"
+                className="mr-2"
+                checked={isHeaterFanManualMode === true}
+                onChange={() => handleHeaterFanModeChange(true)}
+              />
               <p>Thủ công</p>
             </div>
             <div className="p-4 py-6 bg-white border shadow rounded-lg flex items-center">
-              <input type="radio" name="temp-mode" className="mr-2" />
+              <input
+                type="radio"
+                name="heater-fan-mode"
+                className="mr-2"
+                checked={isHeaterFanManualMode === false}
+                onChange={() => handleHeaterFanModeChange(false)}
+              />
               <p>Tự động</p>
             </div>
           </div>
+
+  
 
           {/* Điều chỉnh đèn và quạt */}
           <div className="flex justify-between mt-6">
@@ -406,7 +432,7 @@ const DashboardTempPage = () => {
                   />
                   <div
                     className={`relative w-11 h-6 ${
-                      !isHeaterManualMode ? 'bg-gray-300' : 'bg-gray-400'
+                      !isHeaterFanManualMode ? 'bg-gray-300' : 'bg-gray-400'
                     } peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-gray-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${
                       heaterOn ? 'peer-checked:bg-green-500' : ''
                     }`}
@@ -432,7 +458,7 @@ const DashboardTempPage = () => {
                   />
                   <div
                     className={`relative w-11 h-6 ${
-                      !isFanManualMode ? 'bg-gray-300' : 'bg-gray-400'
+                      !isHeaterFanManualMode ? 'bg-gray-300' : 'bg-gray-400'
                     } peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-gray-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${
                       fanOn ? 'peer-checked:bg-green-500' : ''
                     }`}

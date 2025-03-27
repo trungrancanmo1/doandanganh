@@ -54,3 +54,6 @@ htmlcov/
 # Docker-specific
 Dockerfile
 docker-compose.yml
+
+# my file
+/deprecated
