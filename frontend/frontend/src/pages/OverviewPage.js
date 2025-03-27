@@ -60,14 +60,14 @@ const DashboardOverview = () => {
   
     const fetchData = async () => {
       try {
-        // 1. Đồng bộ dữ liệu sensor
-        const syncUrls = [
-          "moisture",
-          "temperature",
-          "light"
-        ].map((type) => `http://127.0.0.1:8000/api/${type}/record/sync/`);
+        // // 1. Đồng bộ dữ liệu sensor
+        // const syncUrls = [
+        //   "moisture",
+        //   "temperature",
+        //   "light"
+        // ].map((type) => `http://127.0.0.1:8000/api/${type}/record/sync/`);
   
-        // await Promise.all(syncUrls.map(url => axiosInstance.post(url)));
+        // // await Promise.all(syncUrls.map(url => axiosInstance.post(url)));
   
         // 2. Lấy chỉ số mới nhất
         const [humidity, temp, light] = await Promise.all([
@@ -84,13 +84,21 @@ const DashboardOverview = () => {
         ]);
     
         const formatData = (data) =>
-          data.map((item) => ({
-            time: new Date(item.timestamp).toLocaleTimeString([], {
+          data.map((item) => {
+            const date = new Date(item.timestamp);
+            // Cộng thêm 7 tiếng
+            date.setHours(date.getHours() + 7);
+        
+            const time = date.toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
-            }),
-            value: item.value,
-          }));
+            });
+        
+            return {
+              time,
+              value: item.value,
+            };
+          });
     
         setHumidityIndex(formatData(humidity.data));
         setTempIndex(formatData(temp.data));
@@ -99,6 +107,7 @@ const DashboardOverview = () => {
         setHumidityData(formatData(humidityRes.data));
         setTempData(formatData(tempRes.data));
         setLightData(formatData(lightRes.data));
+        
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu biểu đồ:", error);
       }
