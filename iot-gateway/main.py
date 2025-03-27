@@ -1,5 +1,5 @@
 from config import make_topic
-from iot_gateway_to_mqtt_broker import send_data
+from iot_gateway_to_mqtt_broker import send_to_broker
 
 from datetime import datetime
 import json
@@ -20,4 +20,4 @@ if __name__ == '__main__':
     
     payload = json.dumps(sample_data).encode('utf-8')
 
-    send_data(payload=payload, topic=topic)
+    send_to_broker(payload=payload, topic=topic)

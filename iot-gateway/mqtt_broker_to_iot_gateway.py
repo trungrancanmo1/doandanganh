@@ -17,7 +17,7 @@ ser = serial.Serial(
     timeout=1  # Optional: Set a timeout for reading
 )
 
-def send_data(data):
+def send_to_device(data):
     try:
         # Send the data
         ser.write(data.encode('utf-8'))
@@ -25,6 +25,7 @@ def send_data(data):
 
     except serial.SerialException as e:
         print(f"Error opening or communicating with serial port: {e}")
+        
         
 # =================================================
 # SUBSCRIBING FOR ONLY USER'S DEVICES
@@ -40,15 +41,15 @@ def on_connect(mqttc, obj, flags, rc, properties):
 # ON_MESSAGE CALL-BACK
 # =================================================
 def on_message(mqttc, obj, msg):
-
     # decode the payload
     data = json.loads(msg.payload.decode('utf-8'))
     print(f"Received data: {data}")
 
     # control device
+    type = data['type'][:3]
     value = int(data['value'])
-    send_data_str = f"{data['type'][:3]}_{value}"
-    send_data(send_data_str)
+    send_data = f"{type}_{value}"
+    send_to_device(send_data)
 
 
 def on_subscribe(mqttc, obj, mid, reason_code_list, properties):

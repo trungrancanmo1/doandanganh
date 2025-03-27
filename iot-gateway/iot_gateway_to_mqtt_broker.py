@@ -13,7 +13,7 @@ mqtt_client.connect(host=EMQX_URL, port=1883)
 # =====================================================
 # CALL THIS FUNCTION TO PUBLISH THE DATA TO MQTT BROKER
 # =====================================================
-def send_data(payload : bytes, topic : str):
+def send_to_broker(payload : bytes, topic : str):
     '''
     - call this function when you collect the full dictionary
     - data = {
@@ -29,4 +29,4 @@ def send_data(payload : bytes, topic : str):
     }
     '''
     mqtt_client.publish(topic=topic, payload=payload, qos=2)
-    print(f'Publishing data to the topic {topic} successfully')
+    print(f"Published data to topic '{topic}' successfully.")
