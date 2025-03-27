@@ -163,7 +163,6 @@ const DashboardLightPage = () => {
     }
   };
   
-
   const handleModeChange = async (manual) => {
     try {
       await axiosInstance.put("/light/control/mode/", { manual });

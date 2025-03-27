@@ -68,7 +68,17 @@ const DashboardHumidityPage = () => {
         console.error("Lỗi khi lấy độ ẩm hiện tại:", err);
       }
     };
+
+    const fetchPumpMode = async () => {
+      try {
+        const res = await axiosInstance.get("/moisture/control/mode/");
+        setIsPumpManualMode(res.data.manual);
+      } catch (err) {
+        console.error("Lỗi khi lấy chế độ điều chỉnh máy bơm:", err);
+      }
+    };
   
+    fetchPumpMode();
     fetchMoistureBound();
     fetchCurrentMoisture();
   }, [navigate]);
@@ -158,6 +168,16 @@ const DashboardHumidityPage = () => {
       }
     }
   };  
+
+  const handlePumpModeChange = async (manual) => {
+    try {
+      await axiosInstance.put("/pumper/control/mode/", { manual });
+      setIsPumpManualMode(manual);
+    } catch (err) {
+      console.error("Lỗi khi cập nhật chế độ máy bơm:", err);
+    }
+  };
+  
 
   const handleEditClick = () => {
     setEditValues({
@@ -297,18 +317,31 @@ const DashboardHumidityPage = () => {
             </div>
           </div>
 
-          {/* Chế độ điều chỉnh */}
-          <h2 className="text-xl font-bold mt-6 mb-2">Chế độ điều chỉnh</h2>
+          {/* Chế độ điều chỉnh cho máy bơm nước */}
+          <h2 className="text-xl font-bold mt-6 mb-2">Chế độ điều chỉnh máy bơm</h2>
           <div className="grid grid-cols-2 gap-x-2 w-[50%] font-bold">
             <div className="p-4 py-6 bg-white border shadow rounded-lg flex items-center">
-              <input type="radio" name="light-mode" className="mr-2" />
+              <input
+                type="radio"
+                name="pump-mode"
+                className="mr-2"
+                checked={isPumpManualMode === true}
+                onChange={() => handlePumpModeChange(true)}
+              />
               <p>Thủ công</p>
             </div>
             <div className="p-4 py-6 bg-white border shadow rounded-lg flex items-center">
-              <input type="radio" name="light-mode" className="mr-2" />
+              <input
+                type="radio"
+                name="pump-mode"
+                className="mr-2"
+                checked={isPumpManualMode === false}
+                onChange={() => handlePumpModeChange(false)}
+              />
               <p>Tự động</p>
             </div>
           </div>
+
 
           {/* Điều chỉnh bơm nước */}
           <h2 className="text-xl font-bold mt-6 mb-2">Điều chỉnh bơm nước</h2>

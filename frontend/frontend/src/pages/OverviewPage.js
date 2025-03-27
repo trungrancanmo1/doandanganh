@@ -60,14 +60,14 @@ const DashboardOverview = () => {
   
     const fetchData = async () => {
       try {
-        // 1. Đồng bộ dữ liệu sensor
-        const syncUrls = [
-          "moisture",
-          "temperature",
-          "light"
-        ].map((type) => `http://127.0.0.1:8000/api/${type}/record/sync/`);
+        // // 1. Đồng bộ dữ liệu sensor
+        // const syncUrls = [
+        //   "moisture",
+        //   "temperature",
+        //   "light"
+        // ].map((type) => `http://127.0.0.1:8000/api/${type}/record/sync/`);
   
-        // await Promise.all(syncUrls.map(url => axiosInstance.post(url)));
+        // // await Promise.all(syncUrls.map(url => axiosInstance.post(url)));
   
         // 2. Lấy chỉ số mới nhất
         const [humidity, temp, light] = await Promise.all([
