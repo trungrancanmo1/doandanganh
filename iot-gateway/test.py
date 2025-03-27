@@ -1,10 +1,14 @@
 import serial
 import time
 import json
-from config import make_topic
 from datetime import datetime
-# from mqtt_broker_to_iot_gateway import send_to_device
 from iot_gateway_to_mqtt_broker import send_to_broker
+
+from config import *
+import paho.mqtt.client as mqtt
+from paho.mqtt.enums import CallbackAPIVersion
+from paho.mqtt.enums import MQTTProtocolVersion
+
 
 # Device setup
 PORT = 'COM22'
@@ -13,6 +17,64 @@ TIMEOUT = 1
 
 ser = serial.Serial(PORT, BAUDRATE, timeout=TIMEOUT)
 print(f"Serial port {PORT} opened successfully.")
+
+
+# MQTT setup
+def send_to_device(data):
+    try:
+        # Send the data
+        ser.write(data.encode('utf-8'))
+        print(f"Sent: {data}")
+
+    except serial.SerialException as e:
+        print(f"Error opening or communicating with serial port: {e}")
+        
+        
+# =================================================
+# SUBSCRIBING FOR ONLY USER'S DEVICES
+# =================================================
+COMMAND_TOPIC = make_topic('+', 'command', '+')
+
+
+def on_connect(mqttc, obj, flags, rc, properties):
+    mqttc.subscribe(topic=COMMAND_TOPIC)
+
+
+# =================================================
+# ON_MESSAGE CALL-BACK
+# =================================================
+def on_message(mqttc, obj, msg):
+    # decode the payload
+    data = json.loads(msg.payload.decode('utf-8'))
+    print(f"Received data: {data}")
+
+    # control device
+    type = data['type'][:3]
+    value = int(data['value'])
+    send_data = f"{type}_{value}"
+    send_to_device(send_data)
+
+
+def on_subscribe(mqttc, obj, mid, reason_code_list, properties):
+    # logger.info("Subscribed: " + str(mid) + " " + str(reason_code_list))
+    print("Subscribed: " + str(mid) + " " + str(reason_code_list))
+
+
+def on_log(mqttc, obj, level, string):
+    print(string)
+
+
+mqtt_client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2, protocol=MQTTProtocolVersion.MQTTv5)
+mqtt_client.username_pw_set(username=EMQX_USER_NAME, password=EMQX_PASSWORD)
+
+mqtt_client.connect(host=EMQX_URL, port=1883)
+
+
+mqtt_client.on_connect = on_connect
+mqtt_client.on_message = on_message
+mqtt_client.on_subscribe = on_subscribe
+
+mqtt_client.loop_start()
 
 def receive_serial_data():
     try:
@@ -53,25 +115,27 @@ def parse_data_to_dict(data):
     return data_dict
 
 if __name__ == "__main__":
-    read_interval = 2  # Check for data every 2 seconds
+    read_interval = 5  # Check for data every seconds
     try:
         while True:
             data = receive_serial_data()
             if data:
                 data = parse_data_to_dict(data)
                 print(f"Received data: {data}")
+                count = 1
                 for type, value in data.items():
-                    data_formatted =  { 
+                    data_formatted = { 
                         "user_id": "VVRsnPoAEqSbUa9QLwXLgj2D9Zx2",
                         "env_id": "my_simple_garden",
-                        "sensor_id": "sensor-101",
+                        "sensor_id": f"sensor-10{count}",
                         ##########################
                         "timestamp": str(datetime.now().astimezone()),
                         "type": type,
                         "value": value ########### always float
                     }
                     payload = json.dumps(data_formatted).encode('utf-8')
-                    topic = make_topic('sensor-101', 'data', type)
+                    topic = make_topic(f'sensor-10{count}', 'data', type)
+                    count += 1
                     print(f"Send data to broker: {json.dumps(data_formatted, indent=4)}")
                     send_to_broker(payload=payload, topic=topic)
                 # Process the received data here
