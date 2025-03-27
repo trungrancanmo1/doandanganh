@@ -5,8 +5,27 @@ import paho.mqtt.client as mqtt
 from paho.mqtt.enums import CallbackAPIVersion
 from paho.mqtt.enums import MQTTProtocolVersion
 import json
+import serial
+import time
 
+ser = serial.Serial(
+    port='COM22',  # Replace with your serial port
+    baudrate=115200,  # Replace with your desired baud rate
+    parity=serial.PARITY_NONE,
+    stopbits=serial.STOPBITS_ONE,
+    bytesize=serial.EIGHTBITS,
+    timeout=1  # Optional: Set a timeout for reading
+)
 
+def send_data(data):
+    try:
+        # Send the data
+        ser.write(data.encode('utf-8'))
+        print(f"Sent: {data}")
+
+    except serial.SerialException as e:
+        print(f"Error opening or communicating with serial port: {e}")
+        
 # =================================================
 # SUBSCRIBING FOR ONLY USER'S DEVICES
 # =================================================
@@ -24,11 +43,12 @@ def on_message(mqttc, obj, msg):
 
     # decode the payload
     data = json.loads(msg.payload.decode('utf-8'))
+    print(f"Received data: {data}")
 
     # control device
-
-    print(data)
-    
+    value = int(data['value'])
+    send_data_str = f"{data['type'][:3]}_{value}"
+    send_data(send_data_str)
 
 
 def on_subscribe(mqttc, obj, mid, reason_code_list, properties):
