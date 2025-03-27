@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MoistureBound, MoistureRecord
+from .models import MoistureBound, MoistureRecord, MoistureControlMode
 
 
 class MoistureBoundSerializer(serializers.ModelSerializer):
@@ -38,3 +38,9 @@ class MoistureRecordSerializer(serializers.ModelSerializer):
         if value < 0 or value > 100:
             raise serializers.ValidationError('Moisture must lie between 0 and 100')
         return value
+
+
+class MoistureControlModeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MoistureControlMode
+        fields = ['manual']

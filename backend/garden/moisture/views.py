@@ -4,8 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import exceptions
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from .serializers import MoistureBoundSerializer, MoistureRecordSerializer
-from .models import MoistureBound, MoistureRecord
+from .serializers import MoistureBoundSerializer, MoistureRecordSerializer, MoistureControlModeSerializer
+from .models import MoistureBound, MoistureRecord, MoistureControlMode
 from django.conf import settings
 
 from aio_helper.client import get_aio_client
@@ -170,3 +170,12 @@ class DeleteOldestMoistureRecord(views.APIView):
             {'message': f"Deleted {count} oldest records"},
             status=status.HTTP_200_OK,
         )
+
+
+class ManageMoistureControlModeView(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MoistureControlModeSerializer
+    
+    def get_object(self):
+        obj, _ = MoistureControlMode.objects.get_or_create(user=self.request.user)
+        return obj

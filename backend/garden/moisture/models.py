@@ -38,3 +38,17 @@ class MoistureRecord(models.Model):
         timestamp = self.timestamp
         value = self.value
         return f"{username} ({email}): record {value} at {timestamp}"
+
+
+class MoistureControlMode(models.Model):
+    manual = models.BooleanField(default=True)
+    user = models.OneToOneField(
+        to=get_user_model(),
+        on_delete=models.CASCADE,
+        related_name='moisture_control_mode_of',
+    )
+    
+    def __str__(self):
+        username = self.user.username
+        email = self.user.email
+        return f"{username} ({email}): {'manual' if self.manual else 'automatic'} control"
