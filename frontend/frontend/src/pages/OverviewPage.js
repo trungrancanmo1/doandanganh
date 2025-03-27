@@ -84,13 +84,21 @@ const DashboardOverview = () => {
         ]);
     
         const formatData = (data) =>
-          data.map((item) => ({
-            time: new Date(item.timestamp).toLocaleTimeString([], {
+          data.map((item) => {
+            const date = new Date(item.timestamp);
+            // Cộng thêm 7 tiếng
+            date.setHours(date.getHours() + 7);
+        
+            const time = date.toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
-            }),
-            value: item.value,
-          }));
+            });
+        
+            return {
+              time,
+              value: item.value,
+            };
+          });
     
         setHumidityIndex(formatData(humidity.data));
         setTempIndex(formatData(temp.data));
@@ -99,6 +107,7 @@ const DashboardOverview = () => {
         setHumidityData(formatData(humidityRes.data));
         setTempData(formatData(tempRes.data));
         setLightData(formatData(lightRes.data));
+        
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu biểu đồ:", error);
       }

@@ -79,6 +79,7 @@ const DashboardHumidityPage = () => {
     };
   
     fetchPumpMode();
+
     fetchMoistureBound();
     fetchCurrentMoisture();
   }, [navigate]);
@@ -171,13 +172,12 @@ const DashboardHumidityPage = () => {
 
   const handlePumpModeChange = async (manual) => {
     try {
-      await axiosInstance.put("/pumper/control/mode/", { manual });
+      await axiosInstance.put("/moisture/control/mode/", { manual });
       setIsPumpManualMode(manual);
     } catch (err) {
       console.error("Lỗi khi cập nhật chế độ máy bơm:", err);
     }
   };
-  
 
   const handleEditClick = () => {
     setEditValues({
@@ -316,9 +316,8 @@ const DashboardHumidityPage = () => {
               </div>
             </div>
           </div>
-
-          {/* Chế độ điều chỉnh cho máy bơm nước */}
-          <h2 className="text-xl font-bold mt-6 mb-2">Chế độ điều chỉnh máy bơm</h2>
+{/* Chế độ điều chỉnh cho máy bơm nước */}
+<h2 className="text-xl font-bold mt-6 mb-2">Chế độ điều chỉnh máy bơm</h2>
           <div className="grid grid-cols-2 gap-x-2 w-[50%] font-bold">
             <div className="p-4 py-6 bg-white border shadow rounded-lg flex items-center">
               <input
