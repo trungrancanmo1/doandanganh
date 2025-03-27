@@ -62,7 +62,7 @@ const DashboardLightPage = () => {
 
     const fetchCurrentLight = async () => {
       try {
-        await axiosInstance.post("/light/record/sync/");
+        // await axiosInstance.post("/light/record/sync/");
         const res = await axiosInstance.get("/light/record/get/recent/?n=1");
         if (res.data && res.data.length > 0) {
           setCurrentLight(res.data[0].value);
@@ -108,6 +108,24 @@ const DashboardLightPage = () => {
   useEffect(() => {
     fetchPaginatedHistory(historyPage);
   }, [historyPage]);
+
+  const fetchCurrentLightStatus = async () => {
+    try {
+      const res = await axiosInstance.get("/light/control/illuminator/get/?page=1"); // Trang đầu
+      const data = res.data.results;
+      if (data.length > 0) {
+        const latest = data[0]; // Phần tử đầu tiên là mới nhất
+        setLightOn(latest.value > 0 ? true : false);
+      }
+    } catch (err) {
+      console.error("Lỗi khi lấy trạng thái đèn:", err);
+    }
+  };
+  
+  useEffect(() => {
+    fetchCurrentLightStatus();
+  }, []);
+
 
   useEffect(() => {
     setHistoryPage(1);
