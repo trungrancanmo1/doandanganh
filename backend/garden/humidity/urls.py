@@ -23,6 +23,7 @@ from .views import (
     RetrieveMostRecentHumidityRecord,
     RetrieveHumidityRecordListView,
     DeleteOldestHumidityRecord,
+    ManageHumidityControlModeView,
 )
 
 urlpatterns = [
@@ -32,4 +33,5 @@ urlpatterns = [
     path('record/get/recent/', RetrieveMostRecentHumidityRecord.as_view(), name='most_recent_humidity_retrieve'),
     path('record/get/', RetrieveHumidityRecordListView.as_view(), name='humidity_records_retrieve'),
     path('record/delete/', DeleteOldestHumidityRecord.as_view(), name='oldest_humidity_delete'),
+    path('control/mode/', ManageHumidityControlModeView.as_view(), name='humidity_control_mode_manage'),
 ]
