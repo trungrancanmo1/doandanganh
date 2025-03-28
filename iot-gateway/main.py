@@ -45,6 +45,10 @@ def on_message(mqttc, obj, msg):
         type = 'ill'
     elif type == 'fan':
         type = 'ven'
+    elif type == 'pump':
+        type = 'pum'
+    elif type == 'heater':
+        type = 'hea'
     value = int(data['value'])
     send_data = f"{type}_{value}"
     send_to_device(send_data)
@@ -96,7 +100,7 @@ def send_to_broker(payload : bytes, topic : str):
     }
     '''
     mqtt_client.publish(topic=topic, payload=payload, qos=2)
-    print(f"Published data to topic '{topic}' successfully.")
+    print(f"Published data to topic '{topic}' successfully.\n")
 
 
 def receive_serial_data():
