@@ -8,10 +8,6 @@ from .serializers import TemperatureBoundSerializer, TemperatureRecordSerializer
 from .models import TemperatureBound, TemperatureRecord, TemperatureControlMode
 from django.conf import settings
 
-from aio_helper.client import get_aio_client
-from aio_helper.feed import get_or_create_feed
-from aio_helper.data import get_unread_data_from_feed
-
 from utils import ifdb_client
 from garden.settings import INFLUXDB
 import pandas as pd
