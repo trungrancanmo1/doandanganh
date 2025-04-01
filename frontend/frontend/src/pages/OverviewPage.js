@@ -8,8 +8,6 @@ import axiosInstance from "../components/axiosInstance";
 import PlantPicture from "../assets/plantPicture.jpg";
 import { jwtDecode } from "jwt-decode";
 
-
-
 const ChartComponent = ({ title, data, color }) => (
     <div className="p-4 bg-white shadow rounded-lg">
         <h3 className="font-bold mb-2">{title}</h3>

@@ -13,6 +13,7 @@ const DashboardTempPage = () => {
   const [editing, setEditing] = useState(false);
   const [editValues, setEditValues] = useState({ lowest: "", highest: "" });
   const [currentTemp, setCurrentTemp] = useState(null);
+
   const navigate = useNavigate();
   // 💡 Đèn sưởi
   const [heatHistory, setHeatHistory] = useState([]);
@@ -78,7 +79,7 @@ const DashboardTempPage = () => {
           setCurrentTemp(res.data[0].value); 
         }
       } catch (err) {
-        console.error("Lỗi khi lấy ánh sáng hiện tại:", err);
+        console.error("Lỗi khi lấy nhiệt độ hiện tại:", err);
       }
     };
   
