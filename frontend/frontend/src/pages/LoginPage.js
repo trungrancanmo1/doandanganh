@@ -1,40 +1,33 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; 
+import axiosInstance from "../components/axiosInstance";
 import Logo from "../assets/LogoWebsite.png";
 
 const LoginPage = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-    const handleLogin = async (e) => {
-        e.preventDefault(); // Ngăn reload trang
+    try {
+      const res = await axiosInstance.post("/user/login/", { email, password });
+      const data = res.data;
 
-        try {
-            const res = await axios.post("http://127.0.0.1:8000/api/user/login/", {
-                email,
-                password
-            });
+      localStorage.setItem("access_token", data.access);
+      localStorage.setItem("refresh_token", data.refresh);
 
-            const data = res.data;
-
-            // Lưu token vào localStorage
-            localStorage.setItem("access_token", data.access);
-            localStorage.setItem("refresh_token", data.refresh);
-
-            // Điều hướng tới dashboard hoặc overview
-            navigate("/dashboard/overview");
-        } catch (err) {
-            if (err.response && err.response.data) {
-                setError(err.response.data.detail || "Đăng nhập thất bại");
-            } else {
-                setError("Có lỗi xảy ra khi kết nối đến server");
-            }
-        }
-    };
+      navigate("/dashboard/overview");
+    } catch (err) {
+      if (err.response && err.response.data) {
+        setError(err.response.data.detail || "Đăng nhập thất bại");
+      } else {
+        setError("Có lỗi xảy ra khi kết nối đến server");
+      }
+    }
+  };
 
     return (
         <div className="flex h-screen justify-center items-center">
