@@ -7,10 +7,11 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    avatar = serializers.CharField(source='avatar.url', read_only=True)
+    
     class Meta:
         model = User
         fields = ['id', 'email', 'username', 'first_name', 'last_name', 'avatar']
-        read_only_fields = ['id', 'email', 'username', 'avatar']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -39,6 +40,18 @@ class UserAvatarUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['avatar']
+
+    def validate_avatar(self, value):
+        if not value:
+            raise serializers.ValidationError('Avatar is required and can not be empty')
+        return value
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'username', 'first_name', 'last_name', 'avatar']
+        read_only_fields = ['id', 'email', 'username']
 
 
 class PasswordResetRequestSerializer(serializers.Serializer):
