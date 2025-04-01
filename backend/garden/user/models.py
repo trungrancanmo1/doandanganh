@@ -1,4 +1,4 @@
-# models.py
+from cloudinary.models import CloudinaryField
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -7,12 +7,7 @@ class User(AbstractUser):
     username = models.CharField(max_length=30, unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    avatar = models.ImageField(
-        upload_to='avatars',
-        default='avatars/default.png',
-        blank=True,
-        null=True,
-    )
+    avatar = CloudinaryField('avatar', null=True, blank=True)
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
