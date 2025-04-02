@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+import cloudinary
+
 from dotenv import load_dotenv
 from pathlib import Path
 from datetime import timedelta
@@ -30,7 +32,7 @@ SECRET_KEY = os.getenv('DJ_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG_MODE') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['doandanganh.onrender.com', 'localhost']
 
 
 
@@ -42,7 +44,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    
     'django.contrib.staticfiles',
+    'cloudinary',
+    'cloudinary_storage',
     
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
@@ -195,8 +200,22 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME':os.getenv('CD_CLOUD_NAME'),
+    'API_KEY': os.getenv('CD_API_KEY'),
+    'API_SECRET': os.getenv('CD_API_SECRET'),
+}
+
+cloudinary.config(
+    cloud_name=os.getenv('CD_CLOUD_NAME'),
+    api_key=os.getenv('CD_API_KEY'),
+    api_secret=os.getenv('CD_API_SECRET'),
+)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

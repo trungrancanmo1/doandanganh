@@ -8,10 +8,6 @@ from .serializers import IlluminatorControlSerializer
 from .models import IlluminatorControl
 from django.conf import settings
 
-from aio_helper.client import get_aio_client
-from aio_helper.feed import get_or_create_feed
-from aio_helper.data import get_unread_data_from_feed
-
 from garden.settings import USER, MEASUREMENT, INFLUXDB
 from utils import make_topic, send_command, ifdb_client
 

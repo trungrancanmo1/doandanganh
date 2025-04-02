@@ -1,11 +1,12 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 from django.contrib.auth import get_user_model
 
 # Create your models here.
 
 class PlantImage(models.Model):
     timestamp = models.DateTimeField(null=False)
-    image = models.ImageField(upload_to='plant_images/')
+    image = CloudinaryField('plant_image')
     user = models.ForeignKey(
         to=get_user_model(),
         on_delete=models.CASCADE,

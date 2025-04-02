@@ -13,7 +13,7 @@ const AccountSettings = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axiosInstance.get("http://127.0.0.1:8000/api/user/profile/get/");
+        const response = await axiosInstance.get("/user/profile/get/");
         const data = response.data;
         const fullName = `${data.last_name} ${data.first_name}`;
 
@@ -46,7 +46,7 @@ const AccountSettings = () => {
     formData.append("avatar", imageFile);
 
     try {
-      const response = await axiosInstance.put("http://127.0.0.1:8000/api/user/profile/avatar/upload/", formData, {
+      const response = await axiosInstance.put("/user/profile/avatar/upload/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
