@@ -169,9 +169,9 @@ const DashboardTempPage = () => {
     fetchCurrentFanStatus();
   }, []);
 
-  useEffect(() => {
-    if (isHeaterFanManualMode) setIsHeaterFanManualMode(null);
-  }, [isHeaterFanManualMode]);
+  // useEffect(() => {
+  //   if (isHeaterFanManualMode) setIsHeaterFanManualMode(null);
+  // }, [isHeaterFanManualMode]);
   
   
   const toggleHeater = async () => {
@@ -398,7 +398,7 @@ const DashboardTempPage = () => {
                 type="radio"
                 name="heater-fan-mode"
                 className="mr-2"
-                checked={isHeaterFanManualMode === true}
+                checked={isHeaterFanManualMode ?? false}
                 onChange={() => handleHeaterFanModeChange(true)}
               />
               <p>Thủ công</p>
@@ -408,7 +408,7 @@ const DashboardTempPage = () => {
                 type="radio"
                 name="heater-fan-mode"
                 className="mr-2"
-                checked={isHeaterFanManualMode === false}
+                checked={!isHeaterFanManualMode ?? false}
                 onChange={() => handleHeaterFanModeChange(false)}
               />
               <p>Tự động</p>
