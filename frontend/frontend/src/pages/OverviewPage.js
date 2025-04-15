@@ -16,7 +16,7 @@ const ChartComponent = ({ title, data, color }) => (
         <ResponsiveContainer width="100%" height={200}>
             <LineChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="time" />
+                <XAxis dataKey="time" reversed />
                 <YAxis />
                 <Tooltip />
                 <Line type="monotone" dataKey="value" stroke={color} strokeWidth={2} />
@@ -78,9 +78,9 @@ const DashboardOverview = () => {
     
         // 3. Lấy lịch sử biểu đồ (10 điểm gần nhất)
         const [humidityRes, tempRes, lightRes] = await Promise.all([
-          axiosInstance.get("/moisture/record/get/recent/?n=10"),
-          axiosInstance.get("/temperature/record/get/recent/?n=10"),
-          axiosInstance.get("/light/record/get/recent/?n=10"),
+          axiosInstance.get("/moisture/record/get/recent/?n=20"),
+          axiosInstance.get("/temperature/record/get/recent/?n=20"),
+          axiosInstance.get("/light/record/get/recent/?n=20"),
         ]);
     
         const formatData = (data) =>
