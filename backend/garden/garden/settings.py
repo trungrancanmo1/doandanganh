@@ -301,3 +301,12 @@ MQTT_BROKER = {
     'password' : os.getenv('EMQX_PASSWORD'),
     'url' : os.getenv('EMQX_URL')
 }
+
+
+#==========================
+# OBJECT DETECTION WORKFLOW
+#==========================
+OBJDET_API_URL = os.getenv('OBJDET_API_URL')
+OBJDET_API_KEY = os.getenv('OBJDET_API_KEY')
+OBJDET_WORKSPACE = os.getenv('OBJDET_WORKSPACE')
+OBJDET_WORKFLOW = os.getenv('OBJDET_WORKFLOW')
