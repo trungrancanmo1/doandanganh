@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "local_data_process_service"
+name = "mqtt_kafka_bridge"
 version = "0.1.0"
 description = ""
 authors = ["zun <trungdunglebui17112004@gmail.com>"]
 readme = "README.md"
-packages = [{include = "local_data_process_service", from = "src"}]
+packages = [{include = "mqtt_kafka_bridge", from = "src"}]
 
 
 
@@ -65,6 +65,7 @@ vine = "5.1.0"
 wcwidth = "0.2.13"
 werkzeug = "3.1.3"
 psutil = "^7.0.0"
+kafka-python = "^2.1.5"
 
 
 [tool.poetry.group.dev.dependencies]

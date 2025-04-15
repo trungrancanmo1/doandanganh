@@ -5,7 +5,7 @@ import dotenv
 dotenv.load_dotenv('./.env')
 
 # =================================================
-# SOURCE CONNECTOR CONFIGURATION
+# MQTT BROKER CONNECTOR CONFIGURATION
 # =================================================
 APP             =   os.getenv('APP')
 EMQX_USER_NAME  =   os.getenv('EMQX_USER_NAME')
@@ -27,6 +27,17 @@ DATA_ENCODE_SCHEME = os.getenv('DATA_ENCODE_SCHEME')
 
 
 # =================================================
+# KAFKA CONNECTOR CONFIGURATION
+# =================================================
+KAFKA_BOOTSTRAP_SERVER      = os.getenv('KAFKA_BOOTSTRAP_SERVER')
+KAFKA_TOPIC                 = os.getenv('KAFKA_TOPIC')
+KAFKA_EVENT_ENCODE_SCHEME   = os.getenv('KAFKA_EVENT_ENCODE_SCHEME')
+KAFKA_LINGER_TIME           = os.getenv('KAFKA_LINGER_TIME')
+KAFKA_BATCH_SIZE            = os.getenv('KAFKA_BATCH_SIZE')
+
+
+# =================================================
+# DEPRECATED 😵
 # DATA PROCESSING CONFIGURATION
 # LEARN NETWORK IN DOCKER TO RUN THAT
 # =================================================
@@ -35,6 +46,7 @@ BACK_END        = os.getenv('BACK_END')
 
 
 # =================================================
+# DEPRECATED 😵
 # SINK CONNECTOR CONFIGURATION
 # =================================================
 INFLUXDB_TOKEN  = os.getenv('INFLUXDB_TOKEN')

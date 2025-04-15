@@ -3,13 +3,13 @@ from paho.mqtt.enums import CallbackAPIVersion
 from paho.mqtt.enums import MQTTProtocolVersion
 import json
 
-from local_data_process_service.utils import logger
-from local_data_process_service.utils.config import TOPIC, EMQX_USER_NAME, EMQX_PASSWORD, EMQX_URL, DATA_ENCODE_SCHEME
-from local_data_process_service.core.phases import phase1
+from mqtt_kafka_bridge.utils import logger
+from mqtt_kafka_bridge.utils.config import TOPIC, EMQX_USER_NAME, EMQX_PASSWORD, EMQX_URL, DATA_ENCODE_SCHEME, KAFKA_TOPIC
+from mqtt_kafka_bridge.core.bridge import send_to_kafka
 
 
 def on_connect(mqttc, obj, flags, rc, properties):
-    logger.info(msg='Successfully connect to the MQTT broker remotely')
+    logger.info(msg='Successfully connecting to the MQTT broker')
     mqttc.subscribe(topic=TOPIC)
 
 
@@ -17,7 +17,7 @@ def on_connect(mqttc, obj, flags, rc, properties):
 # ON_MESSAGE CALL-BACK
 # =================================================
 def on_message(mqttc, obj, msg):
-    logger.info('Putting task and data into Redis')
+    # logger.info('Putting task and data into Redis')
 
     # decode the payload
     data = {
@@ -25,8 +25,10 @@ def on_message(mqttc, obj, msg):
         'topic' : msg.topic
     }
 
-    phase1.delay(data)
-    
+    # publish to Kafka topic
+    # asynchronous send and automatic push
+    send_to_kafka(data['data'], KAFKA_TOPIC)
+    logger.info('Successfully pubishing event to Kafka')
 
 
 def on_subscribe(mqttc, obj, mid, reason_code_list, properties):

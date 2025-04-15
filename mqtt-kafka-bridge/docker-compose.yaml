@@ -6,19 +6,19 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - ldps_network
+      - mqtt_kafka_bridge_network
 
 
   mqtt_service:
     build: .
-    container_name: mqtt_service
+    container_name: mqtt_kafka_bridge
     env_file:
       - .env
-    command: ["poetry", "run", "python", "-m", "local_data_process_service.app"]
+    command: ["poetry", "run", "python", "-m", "mqtt_kafka_bridge.app"]
     depends_on:
       - redis
     networks:
-      - ldps_network
+      - mqtt_kafka_bridge_network
 
 
   celery_worker:
@@ -26,13 +26,13 @@ services:
     container_name: celery_worker
     env_file:
       - .env
-    command: ["poetry", "run", "celery", "-A", "local_data_process_service.capp", "worker", "--loglevel=info"]
+    command: ["poetry", "run", "celery", "-A", "mqtt_kafka_bridge.capp", "worker", "--loglevel=info"]
     depends_on:
       - redis
     networks:
-      - ldps_network
+      - mqtt_kafka_bridge_network
   
   
 networks:
-  ldps_network:
+  mqtt_kafka_bridge_network:
     driver: bridge

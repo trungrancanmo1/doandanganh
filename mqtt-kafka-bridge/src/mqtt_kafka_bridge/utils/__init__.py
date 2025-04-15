@@ -1,0 +1,1 @@
+from mqtt_kafka_bridge.utils.logger import logger
