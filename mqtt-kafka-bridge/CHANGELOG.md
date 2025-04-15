@@ -7,23 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+---
+
+## [1.1.0] - 2025-04-15
+### Added
 - Added a new Kafka producer service
 
 ### Changed
 - Moved to use Kafka dedicated message queue with microservices
-archtecture
+architecture
 
 ### Deprecated
-- Removed the current celery and redis integration
+- The celery task worker and redis integration
 
 ### Removed
-- Note any features that have been permanently removed.
 
 ### Fixed
-- Document resolved bugs or issues.
 
 ### Security
-- Address any vulnerabilities that have been fixed.
 
 ---
 
