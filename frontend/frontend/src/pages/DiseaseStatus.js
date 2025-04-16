@@ -95,11 +95,11 @@ const DiseaseStatus = () => {
               <div className="border rounded-lg shadow-md p-2 bg-white">
                 {images.length > 0 ? (
                   <img
-                    src={firstImage?.image}
+                    src={firstImage?.annotated_image}
                     alt="Ảnh mới nhất"
                     className="w-full max-w-md rounded-lg cursor-pointer hover:scale-105 transition-transform"
                     onClick={() =>
-                      setSelectedImage(firstImage?.image)
+                      setSelectedImage(firstImage?.annotated_image)
                     }
                   />
                 ) : (

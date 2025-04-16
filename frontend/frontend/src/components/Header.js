@@ -83,7 +83,7 @@ const Header = () => {
                 console.error("Token không hợp lệ:", err);
             }
         }
-    }, []);
+    }, [currentLight, currentMoisture, currentTemp]);
 
     return (
         <div className="h-[100px] bg-gray-100">
