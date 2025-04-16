@@ -184,6 +184,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Email validation
+
+EMAIL_VALIDATION_API_URL = os.getenv('EMAIL_VALIDATION_API_URL')
+EMAIL_VALIDATION_API_KEY = os.getenv('EMAIL_VALIDATION_API_KEY')
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
