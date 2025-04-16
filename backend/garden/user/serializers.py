@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import AccessToken
+from user.services import validate_email
 
 User = get_user_model()
 
@@ -23,6 +24,13 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+    
+    def validate_email(self, value):
+        if not value:
+            raise serializers.ValidationError('Email is required and can not be empty')
+        if not validate_email(str(value)):
+            raise serializers.ValidationError('Email is not valid')
+        return value
 
 
 class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
