@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: "kafka-consumer"
+
+
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    consumer:
+      group-id: "kafka-consumer"
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+
+logging:
+  level:
+    root: "INFO"
+
+
+database:
+  influx:
+    host: ${INFLUXDB_URL}
+    token: ${INFLUXDB_TOKEN}
+    org: ${INFLUXDB_ORG}
+    bucket: ${INFLUXDB_BUCKET}
+    measurement: ${MEASUREMENT}

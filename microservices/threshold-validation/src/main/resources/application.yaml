@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: dev
+
+
+  application:
+    name: threshold-validation-demo
+
+server:
+  port: 7172
