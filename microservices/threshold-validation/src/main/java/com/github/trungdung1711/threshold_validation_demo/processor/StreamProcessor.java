@@ -91,7 +91,6 @@ public class StreamProcessor {
 
 			@Override
 			public boolean test(String key, Alert value) {
-				log.info("Generated an alert");
 				return value != null;
 			}
 			

@@ -310,6 +310,13 @@ MQTT_BROKER = {
 
 
 #==========================
+# KAFKA BROKER
+#==========================
+KAFKA_BROKER = os.getenv('KAFKA_BROKER')
+KAFKA_TOPIC  = os.getenv('KAFKA_TOPIC')
+KAFKA_ENCODE = os.getenv('KAFKA_ENCODE')
+
+#==========================
 # OBJECT DETECTION WORKFLOW
 #==========================
 OBJDET_API_URL = os.getenv('OBJDET_API_URL')

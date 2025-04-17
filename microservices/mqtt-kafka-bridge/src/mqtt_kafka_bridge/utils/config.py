@@ -7,6 +7,7 @@ dotenv.load_dotenv('./.env')
 # =================================================
 # MQTT BROKER CONNECTOR CONFIGURATION
 # =================================================
+MAIN_APP        =   os.getenv('MAIN_APP')
 APP             =   os.getenv('APP')
 EMQX_USER_NAME  =   os.getenv('EMQX_USER_NAME')
 EMQX_PASSWORD   =   os.getenv('EMQX_PASSWORD')
@@ -15,7 +16,7 @@ EMQX_PORT       =   os.getenv('EMQX_PORT')
 TOPIC_TYPE      = ['data', 'command', 'status']
 TOPIC           = '/'.join(
                             [
-                                APP,
+                                MAIN_APP,
                                 '+',
                                 '+',
                                 '+',

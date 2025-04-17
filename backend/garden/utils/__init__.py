@@ -1,5 +1,8 @@
 from influxdb_client_3 import InfluxDBClient3
+from kafka import KafkaProducer
 from garden.settings import INFLUXDB
+import json
+import logging
 
 
 import paho.mqtt.client as mqtt
@@ -8,6 +11,13 @@ from paho.mqtt.enums import MQTTProtocolVersion
 
 from garden.settings import MQTT_BROKER
 from garden.settings import USER, APP_NAME
+from garden.settings import KAFKA_BROKER, KAFKA_ENCODE
+
+
+#==========================
+# LOGGING
+#==========================
+logger = logging.getLogger('django-restapi-service')
 
 
 #==========================
@@ -18,9 +28,6 @@ ifdb_client = InfluxDBClient3(
     token=INFLUXDB['token'], 
     org=INFLUXDB['org'], 
     database=INFLUXDB['bucket'])
-#==========================
-# INFLUX DATABASE SETUP
-#==========================
 
 
 #==========================
@@ -62,6 +69,15 @@ def make_topic(device_id : str, topic_type : str, device_type : str) -> str:
 
     # print(topic)
     return topic
+
+
 #==========================
-# MQTT CLIENT SETUP
+# KAFKA BROKER SET UP
 #==========================
+kafka_producer = KafkaProducer(
+    bootstrap_servers = KAFKA_BROKER,
+    key_serializer = str.encode,
+    value_serializer  = lambda value : json.dumps(value).encode(KAFKA_ENCODE),
+    # linger_ms=int(KAFKA_LINGER_TIME),
+    # batch_size=int(KAFKA_BATCH_SIZE),
+)
