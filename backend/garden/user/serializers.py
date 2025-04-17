@@ -2,15 +2,17 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import AccessToken
+from user.services import validate_email
 
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    avatar = serializers.CharField(source='avatar.url', read_only=True)
+    
     class Meta:
         model = User
         fields = ['id', 'email', 'username', 'first_name', 'last_name', 'avatar']
-        read_only_fields = ['id', 'email', 'username', 'avatar']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -22,6 +24,13 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+    
+    def validate_email(self, value):
+        if not value:
+            raise serializers.ValidationError('Email is required and can not be empty')
+        if not validate_email(str(value)):
+            raise serializers.ValidationError('Email is not valid')
+        return value
 
 
 class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -39,6 +48,18 @@ class UserAvatarUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['avatar']
+
+    def validate_avatar(self, value):
+        if not value:
+            raise serializers.ValidationError('Avatar is required and can not be empty')
+        return value
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'username', 'first_name', 'last_name', 'avatar']
+        read_only_fields = ['id', 'email', 'username']
 
 
 class PasswordResetRequestSerializer(serializers.Serializer):

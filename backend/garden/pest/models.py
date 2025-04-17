@@ -1,11 +1,14 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 from django.contrib.auth import get_user_model
 
 # Create your models here.
 
 class PlantImage(models.Model):
     timestamp = models.DateTimeField(null=False)
-    image = models.ImageField(upload_to='plant_images/')
+    image = CloudinaryField('plant_image')
+    annotated_image = CloudinaryField('annotated_plant_image', blank=True, null=True)
+    predictions = models.JSONField(blank=True, null=True)
     user = models.ForeignKey(
         to=get_user_model(),
         on_delete=models.CASCADE,

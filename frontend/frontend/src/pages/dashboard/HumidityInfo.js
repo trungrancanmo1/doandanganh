@@ -68,7 +68,7 @@ const DashboardHumidityPage = () => {
         console.error("Lỗi khi lấy độ ẩm hiện tại:", err);
       }
     };
-  
+
     const fetchPumpMode = async () => {
       try {
         const res = await axiosInstance.get("/moisture/control/mode/");
@@ -178,7 +178,6 @@ const DashboardHumidityPage = () => {
       console.error("Lỗi khi cập nhật chế độ máy bơm:", err);
     }
   };
-
 
   const handleEditClick = () => {
     setEditValues({
@@ -317,8 +316,8 @@ const DashboardHumidityPage = () => {
               </div>
             </div>
           </div>
-{/* Chế độ điều chỉnh cho máy bơm nước */}
-<h2 className="text-xl font-bold mt-6 mb-2">Chế độ điều chỉnh máy bơm</h2>
+          {/* Chế độ điều chỉnh cho máy bơm nước */}
+          <h2 className="text-xl font-bold mt-6 mb-2">Chế độ điều chỉnh máy bơm</h2>
           <div className="grid grid-cols-2 gap-x-2 w-[50%] font-bold">
             <div className="p-4 py-6 bg-white border shadow rounded-lg flex items-center">
               <input
@@ -341,6 +340,7 @@ const DashboardHumidityPage = () => {
               <p>Tự động</p>
             </div>
           </div>
+
 
           {/* Điều chỉnh bơm nước */}
           <h2 className="text-xl font-bold mt-6 mb-2">Điều chỉnh bơm nước</h2>

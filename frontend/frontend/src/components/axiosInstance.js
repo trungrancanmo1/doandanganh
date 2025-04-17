@@ -1,8 +1,8 @@
 import axios from "axios";
-
+const api =  'https://doandanganh.onrender.com/api'
 // Tạo một instance mới của axios
 const axiosInstance = axios.create({
-  baseURL: "http://127.0.0.1:8000/api",
+  baseURL: api,
   headers: {
     "Content-Type": "application/json",
   },
@@ -25,7 +25,7 @@ const refreshToken = async () => {
   const refresh = localStorage.getItem("refresh_token");
   if (!refresh) throw new Error("Không tìm thấy refresh token");
 
-  const response = await axios.post("http://127.0.0.1:8000/api/user/refresh/", {
+  const response = await axios.post(api + "/user/refresh/", {
     refresh,
   });
 

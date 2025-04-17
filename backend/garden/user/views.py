@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.mail import send_mail, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import get_user_model
 from django.template.loader import render_to_string
 from rest_framework import generics, views, status
@@ -11,6 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import (
     RegisterSerializer,
     UserSerializer,
+    UpdateUserSerializer,
     UserTokenObtainPairSerializer,
     UserAvatarUploadSerializer,
     PasswordResetRequestSerializer,
@@ -50,7 +51,7 @@ class UserAvatarUploadView(generics.UpdateAPIView):
 
 class UpdateUserProfileView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserSerializer
+    serializer_class = UpdateUserSerializer
     queryset = User.objects.all()
     
     def get_object(self):

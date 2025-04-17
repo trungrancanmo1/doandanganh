@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../components/axiosInstance"; // ✅ Dùng instance
 import Logo from "../assets/LogoWebsite.png";
 
 const RegisterPage = () => {
@@ -19,33 +19,26 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (formData.password !== formData.confirmPassword) {
       alert("Mật khẩu xác nhận không khớp!");
       return;
     }
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/user/signup/", {
+      await axiosInstance.post("/user/signup/", {
         email: formData.email,
         password: formData.password,
         username: formData.email.split('@')[0],
         first_name: formData.firstName,
         last_name: formData.lastName
       });
-  
-      console.log("Đăng ký thành công:", res.data);
+
       navigate("/login");
     } catch (err) {
       console.error("Lỗi đăng ký:", err.response?.data || err.message);
       alert("Đăng ký thất bại: " + (err.response?.data?.detail || "Lỗi không xác định"));
     }
-
-    // Tạo fullname nếu cần
-    const fullName = `${formData.lastName} ${formData.firstName}`;
-    console.log("Đăng ký thành công:", {
-      ...formData,
-      fullName,
-    });
   };
 
   return (
@@ -82,6 +75,7 @@ const RegisterPage = () => {
               />
             </div>
           </div>
+
           <label className="block text-gray-700 font-medium mb-1">Email</label>
           <p className="text-sm italic text-gray-500 mb-2">
             Email sẽ không thể thay đổi sau này
