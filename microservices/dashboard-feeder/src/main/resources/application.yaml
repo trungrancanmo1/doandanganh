@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    active: dev
+
+  application:
+    name: dashboard-feeder
+
+server:
+  port: 7173
+
+PORT = 7173

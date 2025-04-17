@@ -399,6 +399,7 @@ const DashboardTempPage = () => {
                 type="radio"
                 name="heater-fan-mode"
                 className="mr-2"
+
                 checked={isHeaterFanManualMode ?? false}
                 onChange={() => handleHeaterFanModeChange(true)}
               />
