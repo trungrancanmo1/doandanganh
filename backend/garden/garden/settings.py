@@ -290,6 +290,7 @@ USER = {
         'light',
         'heater'
     ],
+    'email' : os.getenv('USER_MAIL')
 }
 
 TOPIC_TYPE = [
@@ -315,6 +316,12 @@ MQTT_BROKER = {
 KAFKA_BROKER = os.getenv('KAFKA_BROKER')
 KAFKA_TOPIC  = os.getenv('KAFKA_TOPIC')
 KAFKA_ENCODE = os.getenv('KAFKA_ENCODE')
+
+
+#==========================
+# SAMPLE MAIL TO USE
+#==========================
+
 
 #==========================
 # OBJECT DETECTION WORKFLOW

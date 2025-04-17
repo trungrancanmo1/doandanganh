@@ -21,10 +21,15 @@ class UpdateTemperatureBoundView(generics.UpdateAPIView):
     serializer_class = TemperatureBoundSerializer
     
     def get_object(self):
+
+
         obj, _ = TemperatureBound.objects.get_or_create(user=self.request.user)
 
-        min = TemperatureBound.objects.get().lowest_allowed
-        max = TemperatureBound.objects.get().highest_allowed
+        # raise ConnectionAbortedError('Come')
+
+        min = obj.lowest_allowed
+        max = obj.highest_allowed
+
 
         #===================================
         # KAFKA PRODUCING
@@ -37,7 +42,7 @@ class UpdateTemperatureBoundView(generics.UpdateAPIView):
             'type': USER['sensor_type'][0],
             'max' : max,
             'min' : min,
-            'mail' : 'trungdunglebui17112004@gmail.com'
+            'mail' : USER['email']
             }
 
         key = '/'.join(

@@ -21,8 +21,8 @@ class UpdateLightBoundView(generics.UpdateAPIView):
     def get_object(self):
         obj, _ = LightBound.objects.get_or_create(user=self.request.user)
 
-        min = LightBound.objects.get().lowest_allowed
-        max = LightBound.objects.get().highest_allowed
+        min = obj.lowest_allowed
+        max = obj.highest_allowed
 
         #===================================
         # KAFKA PRODUCING
@@ -35,7 +35,7 @@ class UpdateLightBoundView(generics.UpdateAPIView):
             'type': USER['sensor_type'][2],
             'max' : max,
             'min' : min,
-            'mail' : 'trungdunglebui17112004@gmail.com'
+            'mail' : USER['email']
             }
 
         key = '/'.join(

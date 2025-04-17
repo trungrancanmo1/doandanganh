@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: alert-delivery-service
+
+
+  kafka:
+    bootstrap-servers: "localhost:9092"
+    consumer:
+      group-id: "alert-delivery-service"
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        topic: alert
+  
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${USERNAME}
+    password: ${GOOGLE_APP}
+    protocol: smtp
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: smtp.gmail.com
+
+
+logging:
+  level:
+    root: "INFO"

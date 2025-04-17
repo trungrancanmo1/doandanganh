@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: alert-delivery-service
+
+  profiles:
+    active: dev
+
+servers:
+  port: 7174

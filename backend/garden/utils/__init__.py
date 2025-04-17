@@ -75,7 +75,7 @@ def make_topic(device_id : str, topic_type : str, device_type : str) -> str:
 # KAFKA BROKER SET UP
 #==========================
 kafka_producer = KafkaProducer(
-    bootstrap_servers = KAFKA_BROKER,
+    bootstrap_servers = 'localhost:9092',
     key_serializer = str.encode,
     value_serializer  = lambda value : json.dumps(value).encode(KAFKA_ENCODE),
     # linger_ms=int(KAFKA_LINGER_TIME),

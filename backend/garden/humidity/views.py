@@ -21,8 +21,8 @@ class UpdateHumidityBoundView(generics.UpdateAPIView):
         obj, _ = HumidityBound.objects.get_or_create(user=self.request.user)
 
 
-        min = HumidityBound.objects.get().lowest_allowed
-        max = HumidityBound.objects.get().highest_allowed
+        min = obj.lowest_allowed
+        max = obj.highest_allowed
 
         #===================================
         # KAFKA PRODUCING
@@ -35,7 +35,7 @@ class UpdateHumidityBoundView(generics.UpdateAPIView):
             'type': USER['sensor_type'][1],
             'max' : max,
             'min' : min,
-            'mail' : 'trungdunglebui17112004@gmail.com'
+            'mail' : USER['email']
             }
 
         key = '/'.join(

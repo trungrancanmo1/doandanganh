@@ -60,17 +60,19 @@ public class StreamProcessor {
 				/*
 				 * Joined
 				 */
-				if (thresHoldData == null) {
+				if (thresHoldData == null || sensorData == null) {
+					log.info("One of the data is null");
 					return null;
 				}
 
 				double value = sensorData.getValue();
 				double min = thresHoldData.getMin();
 				double max = thresHoldData.getMax();
-				if (value < min && value > max) {
+				if (value < min || value > max) {
 					/*
 					 * threshold violated
 					 */
+					log.info("Threshold violated with value: " + value + ", min: " + min + ", max: " + max);
 					return Alert.builder()
 								.user_id(sensorData.getUser_id())
 								.env_id(sensorData.getEnv_id())
