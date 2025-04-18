@@ -5,18 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/), 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-### Added
+## [1.2.0]### 2025-04-18
 
 ### Changed
+- Moved from a local Kafka server to a newly dedicated cloud Kafka
+(Redpanda) but Kafka-compatible
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+- Fixed the name of environment varibles (cleaner)
 
 ### Security
+- Added the Redpanda SASL authentication mechanism
 
 ---
 

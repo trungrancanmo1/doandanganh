@@ -4,7 +4,7 @@ from paho.mqtt.enums import MQTTProtocolVersion
 import json
 
 from mqtt_kafka_bridge.utils import logger
-from mqtt_kafka_bridge.utils.config import TOPIC, EMQX_USER_NAME, EMQX_PASSWORD, EMQX_URL, DATA_ENCODE_SCHEME, KAFKA_TOPIC
+from mqtt_kafka_bridge.utils.config import TOPIC, EMQX_USER_NAME, EMQX_PASSWORD, EMQX_URL, EMQX_ENCODE_SCHEME, KAFKA_TOPIC
 from mqtt_kafka_bridge.core.bridge import send_to_kafka
 
 
@@ -21,7 +21,7 @@ def on_message(mqttc, obj, msg):
 
     # decode the payload
     data = {
-        'data' : json.loads(msg.payload.decode(DATA_ENCODE_SCHEME)),
+        'data' : json.loads(msg.payload.decode(EMQX_ENCODE_SCHEME)),
         'topic' : msg.topic
     }
 
