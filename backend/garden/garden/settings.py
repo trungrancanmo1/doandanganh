@@ -311,11 +311,19 @@ MQTT_BROKER = {
 
 
 #==========================
-# KAFKA BROKER
+# KAFKA ACCOUNT 🔑
 #==========================
-KAFKA_BROKER = os.getenv('KAFKA_BROKER')
-KAFKA_TOPIC  = os.getenv('KAFKA_TOPIC')
-KAFKA_ENCODE = os.getenv('KAFKA_ENCODE')
+KAFKA_CLUSTER           = os.getenv('KAFKA_CLUSTER')
+KAFKA_BOOTSTRAP_SERVER  = os.getenv('KAFKA_BOOTSTRAP_SERVER')
+KAFKA_TOPIC             = os.getenv('KAFKA_TOPIC')
+KAFKA_ENCODE_SCHEME     = os.getenv('KAFKA_ENCODE_SCHEME')
+KAFKA_LINGER_TIME       = os.getenv('KAFKA_LINGER_TIME')
+KAFKA_BATCH_SIZE        = os.getenv('KAFKA_BATCH_SIZE')
+KAFKA_SECURITY_PROTOCOL = os.getenv('KAFKA_SECURITY_PROTOCOL')
+KAFKA_SASL_MECHANISM    = os.getenv('KAFKA_SASL_MECHANISM')
+KAFKA_USERNAME          = os.getenv('KAFKA_USERNAME')
+KAFKA_PASSWORD          = os.getenv('KAFKA_PASSWORD')
+KAFKA_GROUP_ID          = os.getenv('KAFKA_GROUP_ID')
 
 
 #==========================

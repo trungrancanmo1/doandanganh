@@ -4,10 +4,6 @@ spring:
 
     streams:
       application-id: threshold-validation
-      state-dir: /tmp/kafka-streams
-      cleanup:
-        on-startup: true
-        on-shutdown: true
 
       properties:
         broker: ${KAFKA_BOOTSTRAP_SERVER}

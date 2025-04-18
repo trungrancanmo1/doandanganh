@@ -9,7 +9,7 @@ from .models import MoistureBound, MoistureRecord, MoistureControlMode
 from django.conf import settings
 
 from utils import ifdb_client, kafka_producer, USER
-from garden.settings import INFLUXDB, KAFKA_BROKER, KAFKA_ENCODE, KAFKA_TOPIC
+from garden.settings import INFLUXDB, KAFKA_TOPIC
 
 
 # Create your views here.

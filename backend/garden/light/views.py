@@ -9,7 +9,7 @@ from .models import LightBound, LightRecord, LightControlMode
 from django.conf import settings
 
 from utils import ifdb_client, kafka_producer
-from garden.settings import INFLUXDB, USER, KAFKA_BROKER, KAFKA_TOPIC
+from garden.settings import INFLUXDB, USER, KAFKA_TOPIC
 import pandas as pd
 
 # Create your views here.

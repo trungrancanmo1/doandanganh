@@ -1,6 +1,6 @@
 from influxdb_client_3 import InfluxDBClient3
 from kafka import KafkaProducer
-from garden.settings import INFLUXDB
+from garden.settings import INFLUXDB, KAFKA_BATCH_SIZE, KAFKA_BOOTSTRAP_SERVER, KAFKA_ENCODE_SCHEME, KAFKA_LINGER_TIME, KAFKA_PASSWORD, KAFKA_SASL_MECHANISM, KAFKA_SECURITY_PROTOCOL, KAFKA_USERNAME
 import json
 import logging
 
@@ -11,7 +11,6 @@ from paho.mqtt.enums import MQTTProtocolVersion
 
 from garden.settings import MQTT_BROKER
 from garden.settings import USER, APP_NAME
-from garden.settings import KAFKA_BROKER, KAFKA_ENCODE
 
 
 #==========================
@@ -75,9 +74,14 @@ def make_topic(device_id : str, topic_type : str, device_type : str) -> str:
 # KAFKA BROKER SET UP
 #==========================
 kafka_producer = KafkaProducer(
-    bootstrap_servers = 'localhost:9092',
+    bootstrap_servers = KAFKA_BOOTSTRAP_SERVER,
     key_serializer = str.encode,
-    value_serializer  = lambda value : json.dumps(value).encode(KAFKA_ENCODE),
-    # linger_ms=int(KAFKA_LINGER_TIME),
-    # batch_size=int(KAFKA_BATCH_SIZE),
+    value_serializer  = lambda value : json.dumps(value).encode(KAFKA_ENCODE_SCHEME),
+    linger_ms=int(KAFKA_LINGER_TIME),
+    batch_size=int(KAFKA_BATCH_SIZE),
+    security_protocol=KAFKA_SECURITY_PROTOCOL,
+    sasl_mechanism=KAFKA_SASL_MECHANISM,
+    sasl_plain_username=KAFKA_USERNAME,
+    sasl_plain_password=KAFKA_PASSWORD,
+    # group_id=KAFKA_GROUP_ID,
 )
