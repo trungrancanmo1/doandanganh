@@ -1,15 +1,25 @@
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER}
 
     streams:
       application-id: threshold-validation
+      state-dir: /tmp/kafka-streams
+      cleanup:
+        on-startup: true
+        on-shutdown: true
 
       properties:
-        broker: localhost:9092
+        broker: ${KAFKA_BOOTSTRAP_SERVER}
         data-topic: sensor-data
         threshold-topic: threshold-config
         alerts-topic: alert
+        sasl:
+          mechanism: ${KAFKA_SASL_MECHANISM}
+          jaas:
+            config: org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_USERNAME}" password="${KAFKA_PASSWORD}";
+        security:
+          protocol: ${KAFKA_SECURITY_PROTOCOL}
 
     consumer:
       key-deserializer:

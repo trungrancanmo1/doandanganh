@@ -4,7 +4,7 @@ spring:
 
 
   application:
-    name: threshold-validation-demo
+    name: threshold-validation
 
 server:
   port: 7172
