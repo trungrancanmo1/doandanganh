@@ -1,38 +1,14 @@
 services:
-
-  redis:
-    image: "redis:latest"
-    container_name: redis
-    ports:
-      - "6379:6379"
+  mqtt-kafka-bridge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mqtt-kafka-bridge:latest
+    container_name: mqtt-kafka-bridge
+    env_file: .env
     networks:
-      - mqtt_kafka_bridge_network
+      - smart-farm
 
-
-  mqtt_service:
-    build: .
-    container_name: mqtt_kafka_bridge
-    env_file:
-      - .env
-    command: ["poetry", "run", "python", "-m", "mqtt_kafka_bridge.app"]
-    depends_on:
-      - redis
-    networks:
-      - mqtt_kafka_bridge_network
-
-
-  celery_worker:
-    build: .
-    container_name: celery_worker
-    env_file:
-      - .env
-    command: ["poetry", "run", "celery", "-A", "mqtt_kafka_bridge.capp", "worker", "--loglevel=info"]
-    depends_on:
-      - redis
-    networks:
-      - mqtt_kafka_bridge_network
-  
-  
 networks:
-  mqtt_kafka_bridge_network:
+  smart-farm:
     driver: bridge

@@ -6,10 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.2.0]### 2025-04-18
+### Added
 
 ### Changed
 - Moved from a local Kafka server to a newly dedicated cloud Kafka
 (Redpanda) but Kafka-compatible
+- Modified the Dockerfile to containerize the microservice
 
 ### Deprecated
 
