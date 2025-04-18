@@ -7,6 +7,7 @@ dotenv.load_dotenv('./.env')
 # =================================================
 # MQTT BROKER CONNECTOR CONFIGURATION
 # =================================================
+MAIN_APP        =   os.getenv('MAIN_APP')
 APP             =   os.getenv('APP')
 EMQX_USER_NAME  =   os.getenv('EMQX_USER_NAME')
 EMQX_PASSWORD   =   os.getenv('EMQX_PASSWORD')
@@ -15,7 +16,7 @@ EMQX_PORT       =   os.getenv('EMQX_PORT')
 TOPIC_TYPE      = ['data', 'command', 'status']
 TOPIC           = '/'.join(
                             [
-                                APP,
+                                MAIN_APP,
                                 '+',
                                 '+',
                                 '+',
@@ -23,17 +24,23 @@ TOPIC           = '/'.join(
                                 TOPIC_TYPE[0]
                             ]
                         )
-DATA_ENCODE_SCHEME = os.getenv('DATA_ENCODE_SCHEME')
+EMQX_ENCODE_SCHEME = os.getenv('EMQX_ENCODE_SCHEME')
 
 
 # =================================================
 # KAFKA CONNECTOR CONFIGURATION
 # =================================================
+KAFKA_CLUSTER               = os.getenv('KAFKA_CLUSTER')
 KAFKA_BOOTSTRAP_SERVER      = os.getenv('KAFKA_BOOTSTRAP_SERVER')
 KAFKA_TOPIC                 = os.getenv('KAFKA_TOPIC')
-KAFKA_EVENT_ENCODE_SCHEME   = os.getenv('KAFKA_EVENT_ENCODE_SCHEME')
+KAFKA_ENCODE_SCHEME         = os.getenv('KAFKA_ENCODE_SCHEME')
 KAFKA_LINGER_TIME           = os.getenv('KAFKA_LINGER_TIME')
 KAFKA_BATCH_SIZE            = os.getenv('KAFKA_BATCH_SIZE')
+KAFKA_SECURITY_PROTOCOL     = os.getenv('KAFKA_SECURITY_PROTOCOL')
+KAFKA_SASL_MECHANISM        = os.getenv('KAFKA_SASL_MECHANISM')
+KAFKA_USERNAME              = os.getenv('KAFKA_USERNAME')
+KAFKA_PASSWORD              = os.getenv('KAFKA_PASSWORD')
+KAFKA_GROUP_ID              = os.getenv('KAFKA_GROUP_ID')
 
 
 # =================================================

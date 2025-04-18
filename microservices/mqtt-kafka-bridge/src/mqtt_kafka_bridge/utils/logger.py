@@ -2,8 +2,10 @@ import logging
 import colorlog
 from logging.handlers import RotatingFileHandler
 
+from mqtt_kafka_bridge.utils.config import APP
+
 # (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-logger = logging.getLogger('hcmut-smart-farm-data-processing-system')
+logger = logging.getLogger(APP)
 logger.setLevel(logging.DEBUG)
 
 # Console handler

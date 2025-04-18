@@ -1,6 +1,6 @@
 spring:
   application:
-    name: "tsdb-writer"
+    name: alert-delivery-service
 
 
   kafka:
@@ -16,17 +16,26 @@ spring:
             config: org.apache.kafka.common.security.scram.ScramLoginModule required username="${KAFKA_USERNAME}" password="${KAFKA_PASSWORD}";
         security:
           protocol: ${KAFKA_SECURITY_PROTOCOL}
+  
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${USERNAME}
+    password: ${GOOGLE_APP}
+    protocol: smtp
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: smtp.gmail.com
 
 
 logging:
   level:
     root: "INFO"
-
-
-database:
-  influx:
-    host: ${INFLUXDB_URL}
-    token: ${INFLUXDB_TOKEN}
-    org: ${INFLUXDB_ORG}
-    bucket: ${INFLUXDB_BUCKET}
-    measurement: ${MEASUREMENT}

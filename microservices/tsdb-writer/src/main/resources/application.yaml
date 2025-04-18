@@ -3,7 +3,7 @@ spring:
     active: dev
 
   application:
-    name: "kafka-consumer"
+    name: "tsdb-writer"
 
 server:
   port: 7171

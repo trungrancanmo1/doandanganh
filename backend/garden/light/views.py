@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from rest_framework import generics, views, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import exceptions
@@ -8,8 +8,8 @@ from .serializers import LightBoundSerializer, LightRecordSerializer, LightContr
 from .models import LightBound, LightRecord, LightControlMode
 from django.conf import settings
 
-from utils import ifdb_client
-from garden.settings import INFLUXDB
+from utils import ifdb_client, kafka_producer
+from garden.settings import INFLUXDB, USER, KAFKA_TOPIC
 import pandas as pd
 
 # Create your views here.
@@ -20,6 +20,45 @@ class UpdateLightBoundView(generics.UpdateAPIView):
     
     def get_object(self):
         obj, _ = LightBound.objects.get_or_create(user=self.request.user)
+
+        min = obj.lowest_allowed
+        max = obj.highest_allowed
+
+        #===================================
+        # KAFKA PRODUCING
+        #===================================
+        data = {
+            'user_id': USER['user_id'],
+            'env_id': USER['env_id'],
+            'sensor_id': USER['sensor_id'][2],
+            'timestamp': datetime.now(timezone.utc).isoformat(),
+            'type': USER['sensor_type'][2],
+            'max' : max,
+            'min' : min,
+            'mail' : USER['email']
+            }
+
+        key = '/'.join(
+            [
+                data['user_id'],
+                data['env_id'],
+                data['sensor_id']
+            ]
+        )
+
+        kafka_producer.send(
+            topic=KAFKA_TOPIC,
+            value=data,
+            key=key,
+            # headers='',
+            # partition='',
+            # timestamp_ms=''
+        )
+
+        kafka_producer.flush()
+
+        # logger.info('Produced a threshold configuration for the temperature')
+
         return obj
 
 

@@ -9,6 +9,7 @@ def send_to_kafka(data : dict, topic : str):
             data['sensor_id']
         ]
     )
+
     connectors.kafka_producer.send(
         topic=topic,
         value=data,
