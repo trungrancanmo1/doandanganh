@@ -1,0 +1,14 @@
+services:
+  tsdb-writer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tsdb-writer:latest
+    container_name: tsdb-writer
+    env_file: .env
+    networks:
+      - smart-farm
+
+networks:
+  smart-farm:
+    driver: bridge
