@@ -64,7 +64,7 @@ func (c *RedpandaConsumer) Read() *Message {
 	for {
 		msg, err := c.Client.ReadMessage(-1)
 		if err != nil {
-			log.Printf("Kafka read error: %v\n", err)
+			log.Println("Kafka read error, skip the message")
 			time.Sleep(time.Second * 5)
 			continue
 		}

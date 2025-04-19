@@ -93,7 +93,7 @@ func NewWebsocketServer(validator auth.Validator) *WebsockerServer {
 		Hub: &Hub{
 			Clients:    make(map[string]*Client),
 			Register:   make(chan *Client, 256),
-			Unregister: make(chan *Client),
+			Unregister: make(chan *Client, 256),
 			Broadcast:  make(chan []byte),
 			Message:    make(chan *redpd.Message, 256),
 		},
