@@ -42,6 +42,7 @@ def send_command(payload : bytes, topic : str):
 
         mqtt_client.disconnect()
     except Exception as e:
+        print(str(e))
         raise IOError('MQTT service failed')
     
 
