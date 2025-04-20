@@ -105,6 +105,7 @@ func (s *WebsockerServer) Run() {
 	go s.Hub.Run()
 
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("New connection")
 		// 1. Extract the token from the URL query parameter
 		token := r.URL.Query().Get("token")
 		if token == "" {
