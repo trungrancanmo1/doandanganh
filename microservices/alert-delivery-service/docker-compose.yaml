@@ -1,0 +1,17 @@
+services:
+  alert-delivery-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      tags:
+        - latest
+    image: alert-delivery-service
+    container_name: alert-delivery-service
+    env_file:
+      - .env
+    networks:
+      - smart-farm
+
+networks:
+  smart-farm:
+    driver: bridge

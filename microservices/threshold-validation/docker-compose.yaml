@@ -1,0 +1,15 @@
+services:
+  threshold-validation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: threshold-validation:latest
+    env_file:
+      - .env
+    container_name: threshold-validation
+    networks:
+      - smart-farm
+
+networks:
+  smart-farm:
+    driver: bridge
