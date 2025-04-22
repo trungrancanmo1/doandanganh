@@ -1,0 +1,18 @@
+services:
+  realtime-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: realtime-service
+    container_name: realtime-service
+    env_file: .env
+    networks:
+      - smart-farm
+    ports:
+      - 8080:8080
+    expose:
+      - 8080
+
+networks:
+  smart-farm:
+    driver: bridge
