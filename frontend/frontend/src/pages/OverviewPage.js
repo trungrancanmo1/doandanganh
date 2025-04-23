@@ -5,7 +5,6 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Sidebar from "../components/Sidebar";
 import axiosInstance from "../components/axiosInstance";
-import PlantPicture from "../assets/plantPicture.jpg";
 import { jwtDecode } from "jwt-decode";
 import wsInstance from "../components/WebSocketInstance";
 

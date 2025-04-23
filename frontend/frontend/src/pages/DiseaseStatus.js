@@ -57,7 +57,8 @@ const DiseaseStatus = () => {
         const res = await axiosInstance.get("/pest/image/get/");
         setImages(res.data.results);
         setTotalPages(Math.ceil(res.data.count / res.data.results.length));
-        setFirstImage(res.data.results[0]); // dùng trực tiếp từ response
+        setFirstImage(res.data.results[0]);
+        console.log(res.data.results[0].predictions)
       } catch (err) {
         console.error(err);
       }
@@ -126,7 +127,11 @@ const DiseaseStatus = () => {
                   </div>
                 </div>
                 <div className="mt-3 px-4 py-2 bg-green-100 text-green-700 font-semibold text-center rounded-md">
-                  Không phát hiện sâu bệnh
+                  {images.length > 0
+                    ? (Array.isArray(firstImage?.predictions) && firstImage?.predictions.length === 0
+                      ? "Không phát hiện sâu bệnh"
+                      : <span className="text-red-600">Phát hiện sâu bệnh</span>)
+                    : "Không có ảnh"}
                 </div>
               </div>
             </div>
@@ -156,7 +161,11 @@ const DiseaseStatus = () => {
                       {img.timestamp?.slice(11, 16) || "--:--"}
                     </span>
                     <span className="ml-auto font-semibold text-green-600">
-                      Không phát hiện sâu bệnh
+                    {
+                    (Array.isArray(img?.predictions) && img?.predictions.length === 0
+                      ? "Không phát hiện sâu bệnh"
+                      : <span className="text-red-600">Phát hiện sâu bệnh</span>)
+                    }
                     </span>
                   </div>
                 ))
