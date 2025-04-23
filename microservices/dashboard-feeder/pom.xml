@@ -28,6 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<ngrok.version>1.0.0</ngrok.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -38,7 +39,6 @@
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -54,6 +54,18 @@
 			<artifactId>spring-kafka-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+            <groupId>com.ngrok</groupId>
+            <artifactId>ngrok-java</artifactId>
+            <version>${ngrok.version}</version>
+        </dependency>
+        <!-- <dependency>
+            <groupId>com.ngrok</groupId>
+            <artifactId>ngrok-java-native</artifactId>
+            <version>${ngrok.version}</version>
+            <classifier>${os.detected.classifier}</classifier>
+            <scope>runtime</scope>
+        </dependency> -->
 	</dependencies>
 
 	<build>
