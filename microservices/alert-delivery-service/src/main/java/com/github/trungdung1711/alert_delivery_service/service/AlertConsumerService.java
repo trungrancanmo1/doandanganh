@@ -22,7 +22,7 @@ public class AlertConsumerService {
 		try {
 			Alert alert = objectMapper.readValue(value, Alert.class);
 			
-			emailService.send(alert);
+			emailService.sendDataAlert(alert);
 		} catch (JsonMappingException e) {
 			e.printStackTrace();
 		} catch (JsonProcessingException e) {

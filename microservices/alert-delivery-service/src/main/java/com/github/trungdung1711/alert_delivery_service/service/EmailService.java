@@ -4,6 +4,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import com.github.trungdung1711.alert_delivery_service.event.AIAlert;
 import com.github.trungdung1711.alert_delivery_service.event.Alert;
 
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
 
-    public void send(Alert alert) {
+    public void sendDataAlert(Alert alert) {
         SimpleMailMessage message = new SimpleMailMessage();
 
         message.setFrom("your@email.com");
@@ -55,5 +56,21 @@ public class EmailService {
         javaMailSender.send(message);
 
         log.info("Successfully send email to: " + alert.getMail());
+    }
+
+    public void sendAIAlert(AIAlert aiAlert) {
+        
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setFrom("your@email.com");
+        message.setTo("dung.lebk2210573@hcmut.edu.vn");
+        message.setSubject("🚨 Pest alert");
+
+        String content = "There is something weird with your plant, please check it out";
+
+        message.setText(content);
+
+        javaMailSender.send(message);
+        log.info("Successfully send AI email");
     }
 }
