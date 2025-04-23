@@ -2,11 +2,16 @@ package redpd
 
 import (
 	"log"
-	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/trungdung1711/realtime-service/config"
 )
+
+type Consumer interface {
+	Read() *Message
+	Subscribe(t string)
+	Start(msg chan *Message) error
+}
 
 type RedpandaConsumer struct {
 	Client *kafka.Consumer
@@ -65,7 +70,7 @@ func (c *RedpandaConsumer) Read() *Message {
 		msg, err := c.Client.ReadMessage(-1)
 		if err != nil {
 			log.Println("Kafka read error, skip the message")
-			time.Sleep(time.Second * 5)
+			// time.Sleep(time.Second * 5)
 			continue
 		}
 

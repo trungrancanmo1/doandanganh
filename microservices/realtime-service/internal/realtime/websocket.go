@@ -10,10 +10,17 @@ import (
 	"github.com/trungdung1711/realtime-service/internal/redpd"
 )
 
+const (
+	pongWait   = 60 * time.Second
+	pingPeriod = (pongWait * 9) / 10
+	writeWait  = 10 * time.Second
+)
+
 type Client struct {
 	ID   string
 	Conn *websocket.Conn
 	Send chan []byte
+	Hub  *Hub
 }
 
 type Hub struct {
@@ -42,17 +49,20 @@ func (h *Hub) Run() {
 				continue
 			}
 			// Assume only 1
-			client := h.Clients["test@email.com"]
+			// We have to choose which one
+			// to give the data to client
+			client := h.Clients["dung.lebk2210573@hcmut.edu.vn"]
 			client.Send <- msg.Value()
 		}
 	}
 }
 
-func NewClient(id string, conn *websocket.Conn) *Client {
+func NewClient(id string, conn *websocket.Conn, hub *Hub) *Client {
 	return &Client{
 		ID:   id,
 		Conn: conn,
 		Send: make(chan []byte, 256),
+		Hub:  hub,
 	}
 }
 
@@ -64,20 +74,6 @@ type WebsockerServer struct {
 	Upgrader  websocket.Upgrader
 	Validator auth.Validator
 	Hub       *Hub
-}
-
-func (w *WebsockerServer) ping(conn *websocket.Conn) {
-	ticker := time.NewTicker(5 * time.Second)
-	defer ticker.Stop()
-
-	for {
-		<-ticker.C
-		err := conn.WriteMessage(websocket.PingMessage, nil)
-		if err != nil {
-			log.Println("Ping fail!")
-			return
-		}
-	}
 }
 
 func NewWebsocketServer(validator auth.Validator) *WebsockerServer {
@@ -126,7 +122,7 @@ func (s *WebsockerServer) Run() {
 			http.Error(w, "Unable to upgrade to websocket protocol", http.StatusServiceUnavailable)
 			return
 		}
-		defer conn.Close()
+		// defer conn.Close()
 
 		// 4. Extract email from token claims
 		email, ok := claims["email"].(string)
@@ -136,25 +132,76 @@ func (s *WebsockerServer) Run() {
 		}
 
 		// 5. Create a new client and register it
-		client := NewClient(email, conn)
+		client := NewClient(email, conn, s.Hub)
 		s.Hub.Register <- client
 
-		// 6. Start pinging the client
-		go s.ping(conn)
-
-		// 7. Handle outgoing messages to the client
-		for msg := range client.Send {
-			if err := conn.WriteMessage(websocket.TextMessage, msg); err != nil {
-				log.Println("Error writing to WebSocket:", err)
-				s.Hub.Unregister <- client
-				return
-			}
-		}
-
-		// 8. Unregister the client when disconnected
-		s.Hub.Unregister <- client
+		go client.WritePump()
+		go client.ReadPump()
 	})
 
 	log.Println("Service listening at port 8080")
 	log.Fatalln(http.ListenAndServe(":8080", nil))
+}
+
+func (c *Client) WritePump() {
+	ticker := time.NewTicker(pingPeriod)
+	defer func() {
+		ticker.Stop()
+		c.Conn.Close()
+		log.Println("Write close")
+	}()
+
+	for {
+		// listen on channel
+		select {
+		case <-ticker.C:
+			// ping
+			c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
+
+			log.Println("Ping sent")
+			if err := c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				return
+			}
+
+		case message, ok := <-c.Send:
+			// new data to serve
+			log.Println("Sent to dashboard")
+			c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
+			if !ok {
+				c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
+				return
+			}
+
+			if err := c.Conn.WriteMessage(websocket.TextMessage, message); err != nil {
+				// write error
+				return
+			}
+		}
+	}
+}
+
+func (c *Client) ReadPump() {
+	defer func() {
+		c.Hub.Unregister <- c
+		c.Conn.Close()
+		log.Println("Read close")
+	}()
+
+	c.Conn.SetReadLimit(512)
+	c.Conn.SetReadDeadline(time.Now().Add(pongWait))
+	c.Conn.SetPongHandler(func(appData string) error {
+		c.Conn.SetReadDeadline(time.Now().Add(pongWait))
+		log.Println("Received pong")
+		return nil
+	})
+
+	// Enter the read loop
+	for {
+		_, _, err := c.Conn.ReadMessage()
+		if err != nil {
+			// Deadline of read
+			log.Println("Client may be disconnected")
+			break
+		}
+	}
 }
