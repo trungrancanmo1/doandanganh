@@ -51,7 +51,7 @@ func (h *Hub) Run() {
 			// Assume only 1
 			// We have to choose which one
 			// to give the data to client
-			client := h.Clients["dung.lebk2210573@hcmut.edu.vn"]
+			client := h.Clients["ngynhogminh@gmail.com"]
 			client.Send <- msg.Value()
 		}
 	}
