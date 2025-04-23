@@ -142,7 +142,7 @@ def parse_data_to_dict(data):
     return data_dict
 
 def send_to_broker_loop_start():
-    read_interval = 5  # Check for data every seconds
+    read_interval = 10  # Check for data every seconds
     try:
         while True:
             time.sleep(read_interval)

@@ -4,7 +4,7 @@
 # ==================================================
 EMQX_USER_NAME  ='iot-gateway'
 EMQX_PASSWORD   ='iot-gateway'
-EMQX_URL        ='z7f54af0.ala.dedicated.aws.emqxcloud.com'
+EMQX_URL        ='j1c5ac51.ala.dedicated.aws.emqxcloud.com'
 
 
 # ==================================================
