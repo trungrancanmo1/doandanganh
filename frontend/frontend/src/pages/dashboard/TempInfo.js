@@ -5,6 +5,7 @@ import Sidebar from "../../components/Sidebar";
 import axiosInstance from "../../components/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import wsInstance from "../../components/WebSocketInstance";
 
 
 const DashboardTempPage = () => {
@@ -284,6 +285,31 @@ const DashboardTempPage = () => {
   const handleChange = (e) => {
     setEditValues({ ...editValues, [e.target.name]: e.target.value });
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!wsInstance.isConnected()) {
+      wsInstance.connect(token);
+      wsInstance.print()
+    }
+    const handleMessage = (data) => {
+      console.log("Dữ liệu WebSocket nhận được:", data);
+      try {
+        if (data.type === "temperature") {
+          setCurrentTemp(data.value); 
+        } else {
+          console.warn("Không xác định loại dữ liệu:", data.type);
+        }
+      } catch (err) {
+        console.error("Lỗi phân tích WebSocket message:", err);
+      }
+    };
+    wsInstance.addListener("message", handleMessage);
+    return () => {
+      wsInstance.removeListener("message", handleMessage);
+      wsInstance.disconnect()
+    };
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen">

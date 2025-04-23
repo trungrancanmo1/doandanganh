@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../components/axiosInstance"; // ✅ Dùng instance
+import axiosInstance from "../components/axiosInstance"; 
 import Logo from "../assets/LogoWebsite.png";
 
 const RegisterPage = () => {

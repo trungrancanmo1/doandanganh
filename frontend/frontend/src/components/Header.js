@@ -5,6 +5,7 @@ import Logo from "../assets/LogoWebsite.png";
 import { useTemperature } from "../hooks/useTemperature";
 import { useLight } from "../hooks/useLight";
 import { useMoisture } from "../hooks/useHumidity";
+import wsInstance from './WebSocketInstance';
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -161,6 +162,7 @@ const Header = () => {
                                         onClick={() => {
                                             localStorage.removeItem("access_token");
                                             localStorage.removeItem("refresh_token");
+                                            wsInstance.disconnect();
                                             navigate("/")
                                         }} 
                                     >
