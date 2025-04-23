@@ -13,6 +13,9 @@ services:
     expose:
       - 8080
 
+
 networks:
   smart-farm:
     driver: bridge
+  
+  

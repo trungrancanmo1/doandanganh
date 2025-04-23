@@ -13,7 +13,7 @@ public class KafkaConsumer {
 	private SimpMessagingTemplate messagingTemplate;
 	@KafkaListener(topics = {"sensor-data"})
 	public void listen(String value) throws Exception, JsonProcessingException {
-		System.out.println("Received: " + value);
+		System.out.println("Receive: " + value);
 		messagingTemplate.convertAndSend("/topic/sensor", value);
 	}
 }

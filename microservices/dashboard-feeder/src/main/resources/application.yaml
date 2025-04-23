@@ -8,4 +8,3 @@ spring:
 server:
   port: 7173
 
-PORT = 7173

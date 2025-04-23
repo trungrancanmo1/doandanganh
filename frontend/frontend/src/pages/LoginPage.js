@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../components/axiosInstance";
 import Logo from "../assets/LogoWebsite.png";
+import wsInstance from '../components/WebSocketInstance';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const LoginPage = () => {
 
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh);
+      wsInstance.connect(data.access)
 
       navigate("/dashboard/overview");
     } catch (err) {
