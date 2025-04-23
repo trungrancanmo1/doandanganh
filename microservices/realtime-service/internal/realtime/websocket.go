@@ -35,6 +35,8 @@ func (h *Hub) Run() {
 	for {
 		select {
 		case client := <-h.Register:
+			// if there is another client
+			// overwrite that value
 			h.Clients[client.ID] = client
 
 		case client := <-h.Unregister:
