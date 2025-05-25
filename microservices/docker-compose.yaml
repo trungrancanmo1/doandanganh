@@ -22,6 +22,23 @@ services:
     container_name: threshold-validation
     networks:
       - hcmut-smart-farm
+    depends_on:
+      - mqtt-kafka-bridge
+
+
+  alert-delivery-service:
+    build:
+      context: ./alert-delivery-service
+      dockerfile: Dockerfile
+    image: alert-delivery-service:latest
+    container_name: alert-delivery-service
+    env_file:
+      - ./alert-delivery-service/.env
+    networks:
+      - hcmut-smart-farm
+    depends_on:
+      - threshold-validation
+
 
   tsdb-writer:
     build:
@@ -32,6 +49,8 @@ services:
     env_file: ./tsdb-writer/.env
     networks:
       - hcmut-smart-farm
+    depends_on:
+      - mqtt-kafka-bridge
 
 
   realtime-service:
@@ -47,6 +66,8 @@ services:
       - 8080:8080
     expose:
       - 8080
+    depends_on:
+      - mqtt-kafka-bridge
 
 
 networks:
