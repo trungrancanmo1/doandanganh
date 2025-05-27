@@ -37,6 +37,7 @@ func (h *Hub) Run() {
 		case client := <-h.Register:
 			// if there is another client
 			// overwrite that value
+			log.Println("New client enters")
 			h.Clients[client.ID] = client
 
 		case client := <-h.Unregister:

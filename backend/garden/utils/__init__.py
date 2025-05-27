@@ -38,7 +38,7 @@ def send_command(payload : bytes, topic : str):
         mqtt_client.username_pw_set(username=MQTT_BROKER['username'], password=MQTT_BROKER['password'])
         mqtt_client.connect(host=MQTT_BROKER['url'], port=1883)
 
-        mqtt_client.publish(topic=topic, payload=payload, qos=2)
+        mqtt_client.publish(topic=topic, payload=payload, qos=0)
 
         mqtt_client.disconnect()
     except Exception as e:

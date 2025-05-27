@@ -1,0 +1,17 @@
+argcomplete==3.6.2
+charset-normalizer==3.4.2
+colorama==0.4.6
+commitizen==4.8.2
+decli==0.6.2
+dotenv==0.9.9
+Jinja2==3.1.6
+MarkupSafe==3.0.2
+packaging==25.0
+paho-mqtt==2.1.0
+prompt_toolkit==3.0.51
+python-dotenv==1.1.0
+PyYAML==6.0.2
+questionary==2.1.0
+termcolor==2.5.0
+tomlkit==0.13.2
+wcwidth==0.2.13

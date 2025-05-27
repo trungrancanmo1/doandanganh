@@ -21,14 +21,23 @@ class UpdateTemperatureBoundView(generics.UpdateAPIView):
     serializer_class = TemperatureBoundSerializer
     
     def get_object(self):
-
-
         obj, _ = TemperatureBound.objects.get_or_create(user=self.request.user)
+
+        # Get data from the user's updated value
+        min = self.request.data.get('lowest_allowed')
+        # min = min if min else obj.lowest_allowed
+        max = self.request.data.get('highest_allowed')
+        # max = max if max else obj.highest_allowed
+
+
+        # obj.lowest_allowed = min
+        # obj.highest_allowed = max
+        # obj.save()
 
         # raise ConnectionAbortedError('Come')
 
-        min = obj.lowest_allowed
-        max = obj.highest_allowed
+        # min = obj.lowest_allowed
+        # max = obj.highest_allowed
 
 
         #===================================

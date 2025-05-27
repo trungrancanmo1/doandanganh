@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 
-	"github.com/joho/godotenv"
 	"github.com/trungdung1711/realtime-service/config"
 	"github.com/trungdung1711/realtime-service/internal/auth"
 	"github.com/trungdung1711/realtime-service/internal/realtime"
@@ -12,10 +11,10 @@ import (
 
 func main() {
 	// load env
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalln("Unable to load .env")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatalln("Unable to load .env")
+	// }
 
 	kafkaConfig, err := config.LoadKafkaConfig()
 	if err != nil {
