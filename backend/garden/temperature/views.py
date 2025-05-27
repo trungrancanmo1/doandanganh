@@ -22,13 +22,21 @@ class UpdateTemperatureBoundView(generics.UpdateAPIView):
     
     def get_object(self):
 
+        # Get data from the user's updated value
+        min = self.request.data.get('lowest_allowed')
+        # min = min if min else obj.lowest_allowed
+        max = self.request.data.get('highest_allowed')
+
 
         obj, _ = TemperatureBound.objects.get_or_create(user=self.request.user)
+        obj.lowest_allowed = min
+        obj.highest_allowed = max
+        obj.save()
 
         # raise ConnectionAbortedError('Come')
 
-        min = obj.lowest_allowed
-        max = obj.highest_allowed
+        # min = obj.lowest_allowed
+        # max = obj.highest_allowed
 
 
         #===================================
