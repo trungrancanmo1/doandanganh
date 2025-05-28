@@ -73,3 +73,5 @@ node_modules/
 node_modules/
 
 /another-lightweight-backend/
+
+.venv
