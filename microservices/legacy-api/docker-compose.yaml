@@ -1,0 +1,15 @@
+services:
+  legacy-api:
+    container_name: legacy-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+      tags:
+        - latest
+    env_file:
+      - .env
+    expose:
+      - 8000
+    ports:
+      - 8000:8000
+    hostname: legacy-api

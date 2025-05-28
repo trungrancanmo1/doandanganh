@@ -1,86 +1,112 @@
-# HCMUT Smart Farm IoT Application
+# HCMUT Smart Farm
 
-This project is a template for an IoT-based smart farm application. It consists of three main components:
-
-1. **Front-End**: A dashboard for monitoring and controlling the farm.
-2. **Back-End**: A Django-based server for managing data and APIs.
-3. **Local Data Processing Service**: A simulation of the IoT data pipeline (with message queue as Redis).
-
----
+HCMUT Smart Farm is an IoT-based system designed to monitor and control smart farming environments.
 
 ## Project Structure
 
 ```
 hcmut-smart-farm/
-├── front-end/               # Dashboard (React/HTML/JS)
-├── back-end/                # Django server
-├── iot-gateway/             # IoT Gateway for device communication
-├── local_data_process_service/ # Local data processing service
+├── dashboard-service/       # Dashboard (React/HTML/JS)
+├── iot-gateway/             # IoT gateway (Python)
+├── microservices/           # Backend microservices
+├── virtual-iot-gateway/     # Virtual IoT gateway (for testing)
 └── README.md                # Project documentation
 ```
+
+- **dashboard-service**: ReactJS dashboard for monitoring and control.
+- **iot-gateway**: Python application managing farm sensors.
+- **microservices**: Multiple backend services supporting the system.
+- **virtual-iot-gateway**: Virtual gateway for local/system testing.
+
+## Getting Started
+
+1. **Clone the repository:**
+    ```bash
+    git clone https://github.com/trungrancanmo1/doandanganh.git
+    cd doandanganh/
+    ```
+2. **Install and set up each component as described below.**
 
 ---
 
 ## Components
 
-### 1. Front-End (Dashboard)
-- **Description**: A user interface for visualizing farm data and sending commands.
-- **Technologies**: React.js or plain HTML/JavaScript.
-- **Setup**:
+### 1. Dashboard Service
+
+- **Description:** User interface for visualizing farm data and sending commands.
+- **Technologies:** React.js, HTML, JavaScript.
+- **Setup:**
     ```bash
-    cd frontend/frontend
+    cd dashboard-service
     npm install
     npm start
     ```
 
-### 2. Back-End (Django)
-- **Description**: A Django-based server for handling APIs and managing data.
-- **Technologies**: Django, Django REST Framework.
-- **Setup**:
+### 2. IoT Gateway
+
+- **Description:** Python-based gateway to manage sensors and devices at the farm.
+- **Technologies:** Python, Yolobit.
+- **Device Setup:** See [Yolobit devices](https://eduall.vn/s/may-tinh-lap-trinh-mini-yolobit/)
+- **Setup:**
     ```bash
-    cd backend
+    cd iot-gateway
     python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    source venv/bin/activate
     pip install -r requirements.txt
     ```
-
-- **Prepare Environment Variables**:
-    Create a `.env` file in the `backend` directory with the necessary environment variables. See the .env.example for further information.
-
-- **Run the Server**:
+- **Run:**
     ```bash
+    python main.py
+    ```
+
+### 3. Microservices
+
+- **Description:** Backend microservices supporting the system.
+- **Technologies:** Python, Go, Java.
+- **Run all services:**
+    ```bash
+    cd microservices
+    docker compose up --detach
+    ```
+- **Run RestAPI service separately:**
+    ```bash
+    cd legacy-api
+    python -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+    cd garden
     python manage.py runserver
     ```
 
-### 3. Local Data Processing Service
-- **Description**: Simulates IoT data generation and processing.
-- **Technologies**: Python.
-- **Setup**:
+### 4. Virtual IoT Gateway
+
+- **Description:** Python script simulating the IoT gateway for testing.
+- **Technologies:** Python.
+- **Setup:**
     ```bash
-    cd local_data_process_service
+    cd virtual-iot-gateway
+    python -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
     ```
----
-
-## Getting Started
-
-1. Clone the repository:
-     ```bash
-     git clone
-     cd hcmut-smart-farm
-     ```
-
-2. Follow the setup instructions for each component.
-
-3. Run all components and ensure they are connected.
+- **Run:**
+    ```bash
+    python main.py
+    ```
 
 ---
 
 ## Future Improvements
-- Add real IoT device integration.
-- Enhance the dashboard with more visualizations.
+
+- Integrate with real IoT devices.
+- Enhance dashboard visualizations.
 - Implement advanced data analytics.
-- ADD more users and more environments ⚠️⚠️⚠️
----
+- Support multiple users and environments.
+
+## Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss your ideas.
 
 ## License
-This project is licensed under the MIT License.
+
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/).

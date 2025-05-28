@@ -61,9 +61,9 @@ const DashboardOverview = () => {
         const fetchChartData = async () => {
             try {
                 const [humidityRes, tempRes, lightRes] = await Promise.all([
-                    axiosInstance.get("/moisture/record/get/recent/?n=20"),
-                    axiosInstance.get("/temperature/record/get/recent/?n=20"),
-                    axiosInstance.get("/light/record/get/recent/?n=20"),
+                    axiosInstance.get("/moisture/record/get/recent/?n=50"),
+                    axiosInstance.get("/temperature/record/get/recent/?n=50"),
+                    axiosInstance.get("/light/record/get/recent/?n=50"),
                 ]);
 
                 const formatData = (data) =>
